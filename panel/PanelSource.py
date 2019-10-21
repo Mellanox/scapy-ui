@@ -6,11 +6,11 @@ import os
 class PanelSource(flx.PyWidget):
 	def init(self):
 		with flx.HBox() as pnl_source:
-			flx.Label(text="Name: ")
-			self.txt_name = flx.LineEdit(text="test", flex=1)
+			flx.Label(text="Name: ", css_class="title",)
+			self.txt_name = flx.LineEdit(text="test", flex=1, )
 			self.btn_save = flx.Button(text='Apply')
-			self.btn_new = flx.Button(text='New')
-			self.btn_del = flx.Button(text='Delete')
+			self.btn_new = flx.Label(text='New', css_class="link",)
+			self.btn_del = flx.Label(text='Delete', css_class="link")
 
 	@flx.reaction('btn_save.pointer_click')
 	def on_save(self, *events):

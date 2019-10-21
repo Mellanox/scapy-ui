@@ -8,6 +8,15 @@ from panel.PanelSource import *
 from panel.PanelRx import *
 
 class ScapyUI(flx.PyWidget):
+	CSS = """
+		.list {overflow:auto;}
+		.link {text-decoration:underline; color:blue;}
+		.link:hover {background-color:#EEEEEE;}
+		.link:active {text-decoration:none}
+		.title {background: #eff;}
+		.debug {border: 5px solid green; background: #eee;}
+	"""	
+
 	def init(self):
 		with flx.VBox() as self.pnl_main:
 			with flx.HSplit(flex=1):
@@ -16,8 +25,6 @@ class ScapyUI(flx.PyWidget):
 					self.pnl_source = PanelSource() 
 					self.pnl_tx = flx.Label(text='PanelTx', flex=10)
 			self.lbl_status = flx.Label(text='...')
-#		with flx.VBox(flex=1) as self.pnl_rx:
-#			self.btn_rx = flx.Button(text='Back')
 		self.pnl_rx = PanelRx()
 		self.pnl_rx.set_parent(None)
 
@@ -36,8 +43,6 @@ class ScapyUI(flx.PyWidget):
 		self.pnl_main.set_parent(None)  # Detach
 
 	def load_config(self, name, pkt):
-		self.pnl_main.set_parent(self.root)
-		self.pnl_rx.set_parent(None)
 		self.pnl_source.txt_name.set_text(name)
 		self.pnl_tx.set_text(repr(pkt))
 		self.set_status(name)
@@ -50,7 +55,7 @@ class ScapyUI(flx.PyWidget):
 		self.pnl_tx.set_text("")
 		self.pnl_config.del_config(name)
 
-	def new_config(self, name):
+	def new_config(self):
 		self.pnl_tx.set_text("")
 
 	def set_status(self, status):

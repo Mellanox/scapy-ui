@@ -17,8 +17,8 @@ class PanelConfig(flx.PyWidget):
 		self.cfg_name = '.scapy-ui'
 		self.lst_names = []
 		with flx.VBox():
-			self.lst_config = flx.GroupWidget(title="Recent:", flex=1)
-			self.btn_load = flx.Button(text='Load Pcap...')
+			self.lst_config = flx.GroupWidget(title="Recent:", flex=1, css_class="list")
+			self.btn_load = flx.Label(text='Load Pcap...', css_class="link")
 			self.btn_sniff = flx.Button(text='Sniff...')
 		self.load_names()
 		
