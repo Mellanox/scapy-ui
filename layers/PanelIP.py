@@ -59,8 +59,8 @@ class PanelIP(flx.PyWidget):
 
 	@flx.reaction('btn_save.pointer_click')
 	def on_save(self, *events):
-		self._parent.refresh_pkt()
 		self.root.show_tx()
+		self._parent.refresh_pkt()
 
 	@flx.reaction
 	def on_update(self, *events):
