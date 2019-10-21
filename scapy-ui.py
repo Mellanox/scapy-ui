@@ -9,18 +9,29 @@ from panel.PanelSource import *
 
 class ScapyUI(flx.PyWidget):
 	def init(self):
-		with flx.VBox():
-			with flx.HSplit(flex=1) as self.pnl_main:
+		with flx.VBox() as self.pnl_main:
+			with flx.HSplit(flex=1):
 				self.pnl_config = PanelConfig(flex=1)
 				with flx.VBox(flex=6):
 					self.pnl_source = PanelSource() 
 					self.pnl_tx = flx.Label(text='PanelTx', flex=10)
 			self.lbl_status = flx.Label(text='...')
-		self.pnl_rx = flx.Label(text='PanelRx')
+		with flx.VBox(flex=1) as self.pnl_rx:
+			self.btn_rx = flx.Button(text='Back')
 		self.pnl_rx.set_parent(None)
 
+	@flx.reaction('btn_rx.pointer_click')
+	def on_pcap_load(self, *events):
+		self.show_tx()
+
+	def show_tx(self):
+		self.pnl_main.set_parent(self._jswidget)  # Attach
+		self.pnl_rx.set_parent(None)  # Detach
+
 	def show_rx(self):
-		self.pnl_rx.set_parent(self.root)  # Attach
+		# print(self.__dict__)
+		# print(self.pnl_main.parent)
+		self.pnl_rx.set_parent(self._jswidget)  # Attach
 		self.pnl_main.set_parent(None)  # Detach
 
 	def load_config(self, name, pkt):
