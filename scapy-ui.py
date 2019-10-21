@@ -25,22 +25,22 @@ class ScapyUI(flx.PyWidget):
 					self.pnl_source = PanelSource() 
 					self.pnl_tx = flx.Label(text='PanelTx', flex=10)
 			self.lbl_status = flx.Label(text='...')
+		self.pnl_active = self.pnl_main
 		self.pnl_rx = PanelRx()
 		self.pnl_rx.set_parent(None)
 
-#	@flx.reaction('btn_rx.pointer_click')
-	def on_pcap_load(self, *events):
-		self.show_tx()
+	def show_panel(self, pnl):
+		print("switch to panel: {}".format(pnl))
+		if self.pnl_active != None:
+			self.pnl_active.set_parent(None)  # Detach
+		pnl.set_parent(self._jswidget)  # Attach
+		self.pnl_active = pnl
 
 	def show_tx(self):
-		self.pnl_main.set_parent(self._jswidget)  # Attach
-		self.pnl_rx.set_parent(None)  # Detach
+		self.show_panel(self.pnl_main)
 
 	def show_rx(self):
-		# print(self.__dict__)
-		# print(self.pnl_main.parent)
-		self.pnl_rx.set_parent(self._jswidget)  # Attach
-		self.pnl_main.set_parent(None)  # Detach
+		self.show_panel(self.pnl_rx)
 
 	def load_config(self, name, pkt):
 		self.pnl_source.txt_name.set_text(name)

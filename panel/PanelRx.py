@@ -98,6 +98,8 @@ class PanelRx(flx.PyWidget):
                 self.iface=flx.ComboBox(options=relay.ifname)
                 self.start=flx.Button(text="start")
                 self.stop=flx.Button(text="stop")
+                flx.Label(text="", flex=1)
+                self.btn_back=flx.Button(text="back")
             self.view = PanelRxView()
 
     @event.reaction
@@ -105,6 +107,10 @@ class PanelRx(flx.PyWidget):
         if self.iface.selected_index is not None:
             self.ifname = self.iface.text
             print(self.ifname)
+
+    @event.reaction('btn_back.pointer_click')
+    def _back_clicked(self, *events):
+        self.root.show_tx()
 
     @event.reaction('start.pointer_click')
     def _start_clicked(self, *events):
@@ -131,8 +137,8 @@ class PanelRxView(flx.PyWidget):
 
     @flx.action
     def update_info(self, info):
-        if info.packets:
-            self.summary.add_summary(info.packets)
+        if info['packets'] != None:
+            self.summary.add_summary(info['packets'])
 
     @flx.action
     def clear_info(self):
