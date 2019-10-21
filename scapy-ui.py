@@ -5,7 +5,7 @@ from flexx import flx
 
 from panel.PanelConfig import *
 from panel.PanelSource import *
-
+from panel.PanelRx import *
 
 class ScapyUI(flx.PyWidget):
 	def init(self):
@@ -16,11 +16,12 @@ class ScapyUI(flx.PyWidget):
 					self.pnl_source = PanelSource() 
 					self.pnl_tx = flx.Label(text='PanelTx', flex=10)
 			self.lbl_status = flx.Label(text='...')
-		with flx.VBox(flex=1) as self.pnl_rx:
-			self.btn_rx = flx.Button(text='Back')
+#		with flx.VBox(flex=1) as self.pnl_rx:
+#			self.btn_rx = flx.Button(text='Back')
+		self.pnl_rx = PanelRx()
 		self.pnl_rx.set_parent(None)
 
-	@flx.reaction('btn_rx.pointer_click')
+#	@flx.reaction('btn_rx.pointer_click')
 	def on_pcap_load(self, *events):
 		self.show_tx()
 
