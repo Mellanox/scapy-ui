@@ -14,7 +14,8 @@ class PanelSource(flx.PyWidget):
 
 	@flx.reaction('btn_save.pointer_click')
 	def on_save(self, *events):
-		self.root.save_config(self.txt_name.text)
+		if len(self.txt_name):
+			self.root.save_config(self.txt_name.text)
 
 	@flx.reaction('btn_del.pointer_click')
 	def on_del(self, *events):

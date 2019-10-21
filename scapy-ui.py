@@ -50,19 +50,18 @@ class ScapyUI(flx.PyWidget):
 
 	def load_config(self, name, pkt):
 		self.pnl_source.txt_name.set_text(name)
-		self.pnl_tx.set_text(repr(pkt))
-		self.set_status(name)
+		self.set_status("{}: {}".format(name, repr(pkt)))
 
 	def save_config(self, name):
 		pkt = Ether()/IP(src="1.2.3.4")/UDP(sport=123)/"abc"
 		self.pnl_config.save_config(name, pkt)
 
 	def del_config(self, name):
-		self.pnl_tx.set_text("")
+		self.set_status("")
 		self.pnl_config.del_config(name)
 
 	def new_config(self):
-		self.pnl_tx.set_text("")
+		self.set_status("")
 
 	def set_status(self, status):
 		self.lbl_status.set_text(status)

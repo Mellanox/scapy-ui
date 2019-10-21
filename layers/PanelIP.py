@@ -29,7 +29,7 @@ class LayerIP(flx.PyWidget):
 	def on_detail(self, *events):
 		pkt_set(self.txt_src, self.pkt, 'src')
 		pkt_set(self.txt_dst, self.pkt, 'dst')
-		with self:
+		with self.root:
 		    pnl = PanelIP(self)
 		self.root.show_panel(pnl)
 	

@@ -63,7 +63,7 @@ class PanelConfig(flx.PyWidget):
 		cf.read(self.cfg_name)
 		if not cf.has_section('recent'):
 			return
-		cf['recent'].pop(name)
+		cf['recent'].pop(name, None)
 		with open(self.cfg_name, "w") as f:
 			cf.write(f)
 		self.load_names()
