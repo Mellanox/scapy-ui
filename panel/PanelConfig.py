@@ -44,7 +44,7 @@ class PanelConfig(flx.PyWidget):
 		config = cf['recent'][name]
 		pkt = self.parse_scapy(config)
 		if pkt != None:
-			self.root.show_tx(name, pkt) 
+			self.root.load_config(name, pkt) 
 			
 	def save_config(self, name, pkt):
 		cf = configparser.ConfigParser()
