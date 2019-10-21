@@ -7,6 +7,9 @@ from panel.PanelConfig import *
 from panel.PanelSource import *
 from panel.PanelRx import *
 
+from layers.PanelIP import *
+
+
 class ScapyUI(flx.PyWidget):
 	CSS = """
 		.list {overflow:auto;}
@@ -14,6 +17,7 @@ class ScapyUI(flx.PyWidget):
 		.link:hover {background-color:#EEEEEE;}
 		.link:active {text-decoration:none}
 		.title {background: #eff;}
+		.no_border {border: 0px}
 		.debug {border: 5px solid green; background: #eee;}
 	"""	
 
@@ -23,17 +27,20 @@ class ScapyUI(flx.PyWidget):
 				self.pnl_config = PanelConfig(flex=1)
 				with flx.VBox(flex=6):
 					self.pnl_source = PanelSource() 
-					self.pnl_tx = flx.Label(text='PanelTx', flex=10)
+					with flx.VBox() as self.pnl_tx:
+						flx.Label(text='PanelTx')
+						LayerIP()
+					flx.Label(text='', flex=10)
 			self.lbl_status = flx.Label(text='...')
 		self.pnl_active = self.pnl_main
 		self.pnl_rx = PanelRx()
 		self.pnl_rx.set_parent(None)
 
 	def show_panel(self, pnl):
+		pnl.set_parent(self._jswidget)  # Attach
 		print("switch to panel: {}".format(pnl))
 		if self.pnl_active != None:
 			self.pnl_active.set_parent(None)  # Detach
-		pnl.set_parent(self._jswidget)  # Attach
 		self.pnl_active = pnl
 
 	def show_tx(self):
