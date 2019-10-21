@@ -4,8 +4,9 @@ from scapy.all import *
 from flexx import flx
 
 from panel.PanelConfig import *
-from panel.PanelSource import *
+#from panel.PanelSource import *
 from panel.PanelRx import *
+from panel.PanelTx import *
 
 from layers.PanelIP import *
 
@@ -26,11 +27,12 @@ class ScapyUI(flx.PyWidget):
 			with flx.HSplit(flex=1):
 				self.pnl_config = PanelConfig(flex=1)
 				with flx.VBox(flex=6):
-					self.pnl_source = PanelSource() 
-					with flx.VBox() as self.pnl_tx:
-						flx.Label(text='PanelTx')
-						LayerIP()
-					flx.Label(text='', flex=10)
+#					self.pnl_source = PanelSource() 
+#					with flx.VBox() as self.pnl_tx:
+#						flx.Label(text='PanelTx')
+#						LayerIP()
+#					flx.Label(text='', flex=10)
+					self.pnl_tx = PanelTx(flex=10)
 			self.lbl_status = flx.Label(text='...')
 		self.pnl_active = self.pnl_main
 		self.pnl_rx = PanelRx()
