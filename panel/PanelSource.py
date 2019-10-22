@@ -11,6 +11,7 @@ class PanelSource(flx.PyWidget):
 			self.btn_save = flx.Button(text='Apply', flex=2)
 			self.btn_new = flx.Button(text='New', flex=2)
 			self.btn_del = flx.Button(text='Delete', flex=2)
+		self.on_name(None)
 
 	@flx.reaction('btn_save.pointer_click')
 	def on_save(self, *events):
@@ -28,4 +29,18 @@ class PanelSource(flx.PyWidget):
 	def on_new(self, *events):
 		self.txt_name.set_text("")
 		self.root.new_config()
+
+	@flx.reaction('txt_name.text')
+	def on_name(self, *events):
+		if len(self.txt_name.text.strip()) == 0:
+			self.btn_save.set_disabled(1)
+			self.btn_save.set_css_class("disabled")
+			self.btn_del.set_disabled(1)
+			self.btn_del.set_css_class("disabled")
+		else:
+			self.btn_save.set_disabled(0)
+			self.btn_save.set_css_class("")
+			self.btn_del.set_disabled(0)
+			self.btn_del.set_css_class("")
+			
 

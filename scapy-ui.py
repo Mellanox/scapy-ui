@@ -19,6 +19,7 @@ class ScapyUI(flx.PyWidget):
 		.link:active {text-decoration:none}
 		.title {background: #eff;}
 		.no_border {border: 0px}
+		.disabled {opacity: 0.6; cursor: not-allowed;}
 		.debug {border: 5px solid green; background: #eee;}
 	"""	
 
