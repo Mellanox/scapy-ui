@@ -85,9 +85,9 @@ class EEth(flx.PyWidget):
     def init(self):
       with flx.HFix():
         self.line = flx.Label(text='Ethernet:', flex=2)
-        self.e_src = flx.LineEdit(placeholder_text='00:11:22:33:44:55', flex=10)
+        self.e_src = flx.LineEdit(placeholder_text='00:11:22:33:44:55', text='00:11:22:33:44:55', flex=10)
         self.ar = flx.Label(text='->', flex=1)
-        self.e_dst = flx.LineEdit(placeholder_text='00:11:22:33:44:56', flex=10)
+        self.e_dst = flx.LineEdit(placeholder_text='00:11:22:33:44:56', text='00:11:22:33:44:56', flex=10)
         self.bt_dtl = flx.Button(text='...', flex=1)
 
     def get_elm(self):
@@ -123,9 +123,9 @@ class EUDP(flx.PyWidget):
     def init(self):
       with flx.HFix():
         self.prot = flx.Label(text='udp:',flex=2)
-        self.e_src = flx.LineEdit(placeholder_text='5464', flex=10)
+        self.e_src = flx.LineEdit(placeholder_text='5464', text='5464', flex=10)
         self.ar = flx.Label(text='->', flex=1)
-        self.e_dst = flx.LineEdit(placeholder_text='250', flex=10)
+        self.e_dst = flx.LineEdit(placeholder_text='250', text='250', flex=10)
         self.bt_dtl = flx.Button(text='...',flex=1)
 
     def get_elm(self):
@@ -184,7 +184,7 @@ class ETCP(flx.PyWidget):
 
     def get_elm(self):
         if (self.prot.text == 'tcp'):
-            return TCP(sport=self.e_src.text, dport=self.e_dst.text)
+            return TCP(sport=int(self.e_src.text), dport=int(self.e_dst.text))
         else:
             return UDP(sport=int(self.e_src.text), dport=int(self.e_dst.text))
 
@@ -248,24 +248,27 @@ class EditDetail(flx.PyWidget):
             self.epld = EPLD(flex=1)
             self.eraw = ERAW(flex=10)
 
-class ESend(ui.VBox):
+class ESend(flx.PyWidget):
     def init(self):
-        with ui.HFix():
-            self.lp = ui.Label(text="Port:", flex=2)
-            self.combo = ui.ComboBox(editable=False, options=('eth1', 'eth2'),selected_key='eth1', flex=2)
-            self.lept1 = ui.Label(text=" ", flex=3)
-            self.lc = ui.Label(text='Count', flex=2)
-            self.lcv = ui.LineEdit(placeholder_text='1', flex=2)
-            self.lept2 = ui.Label(text=" ", flex=3)
-            self.ll = ui.Label(text='Interval/ms', flex=3)
-            self.llv = ui.LineEdit(placeholder_text='100', flex=2)
-            self.lept3 = ui.Label(text=" ", flex=3)
-            self.snd_btn = ui.Button(text='Send', flex=2)
+        with ui.VBox():
+            with ui.HFix():
+                self.lp = ui.Label(text="Port:", flex=2)
+                self.combo = ui.ComboBox(editable=False, options=('eth1', 'eth2'),selected_key='eth1', flex=2)
+                self.lept1 = ui.Label(text=" ", flex=3)
+                self.lc = ui.Label(text='Count', flex=2)
+                self.lcv = ui.LineEdit(placeholder_text='1', flex=2)
+                self.lept2 = ui.Label(text=" ", flex=3)
+                self.ll = ui.Label(text='Interval/ms', flex=3)
+                self.llv = ui.LineEdit(placeholder_text='100', flex=2)
+                self.lept3 = ui.Label(text=" ", flex=3)
+                self.snd_btn = ui.Button(text='Send', flex=2)
 
     @flx.reaction('snd_btn.pointer_click')
     def _send_packet(self, *events):
+        packet = self.root.pnl_tx.get_packet()
+        packet.show()
         print("Will send a packet")
-        #sendp(packets,iface='eth0',count=1)
+        sendp(packets, iface='eth2', count=1)
 
 class PanelTx(flx.PyWidget):
     def init(self):
