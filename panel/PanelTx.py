@@ -160,10 +160,10 @@ class EVXLAN(flx.PyWidget):
         self.bt_dtl = flx.Button(text='...', flex=1)
 
     def get_vxlan_elm(self):
-        return VXLAN(vni=self.e_vni.text)
+        return VXLAN(vni=int(self.e_vni.text))
 
     def get_vlan_elm(self):
-        return Dot1Q(vlan=self.e_vlan.text)
+        return Dot1Q(vlan=int(self.e_vlan.text))
 
     def get_vxlan_dp_elm(self):
         return "VXLAN(vni=\"" + self.e_vni.text + "\")"
