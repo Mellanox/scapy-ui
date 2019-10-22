@@ -27,29 +27,7 @@ class Recent(ui.VFix):
             for t in ['foo', 'bar', 'spam', 'eggs']:
                 ui.TreeItem(text=t, checked=None, )
 
-class EName(flx.PyWidget):
-    def init(self):
-        with ui.HFix():
-            self.lb_title = flx.Label(text='Name:', flex=2)
-            self.txt_name = flx.LineEdit(placeholder_text='tcp', flex=16)
-            self.btn_save = flx.Button(text='Apply', flex=2)
-            self.btn_new = flx.Button(text='New', flex=2)
-            self.btn_del = flx.Button(text='Del', flex=2)
-
-        @flx.reaction('btn_save.pointer_click')
-        def on_save(self, *events):
-                self.root.save_config(self.txt_name.text)
-
-        @flx.reaction('btn_del.pointer_click')
-        def on_del(self, *events):
-                self.root.del_config(self.txt_name.text)
-
-        @flx.reaction('btn_new.pointer_click')
-        def on_new(self, *events):
-                self.txt_name.set_text("")
-                self.root.new_config()
-
-class Eline(ui.HFix): 
+class Eline(flx.PyWidget): 
 
     CSS = """
     .flx-Eline {
@@ -60,82 +38,87 @@ class Eline(ui.HFix):
     """
 
     def init(self):
-        self.beth = ui.ToggleButton(text='ether', checked=1, flex=1)
-#        self.bip4 = ui.ToggleButton(text='ip4', flex=1)
-#        self.bip4i = ui.ToggleButton(text='ip4i', flex=1)
-        self.bip6 = ui.ToggleButton(text='ipv6', flex=1)
-        self.btcp = ui.ToggleButton(text='tcp', flex=1)
-#        self.budp = ui.ToggleButton(text='udp', flex=1)
-        self.bvxlan = ui.ToggleButton(text='vxlan', flex=1)
-#        self.bvlan = ui.ToggleButton(text='gre', flex=1)
-        self.bvlan = ui.ToggleButton(text='vlan', flex=1)
-#        self.bmpls = ui.ToggleButton(text='mpls', flex=1)
-        self.bpload = ui.ToggleButton(text='payload', checked=1, flex=1)
+        with ui.HFix():
+            self.beth = ui.ToggleButton(text='ether', checked=1, flex=1)
+            #self.bip4 = ui.ToggleButton(text='ip4', flex=1)
+            #self.bip4i = ui.ToggleButton(text='ip4i', flex=1)
+            self.bip6 = ui.ToggleButton(text='ipv6', flex=1)
+            self.btcp = ui.ToggleButton(text='tcp', flex=1)
+            #self.budp = ui.ToggleButton(text='udp', flex=1)
+            self.bvxlan = ui.ToggleButton(text='vxlan', flex=1)
+            #self.bvlan = ui.ToggleButton(text='gre', flex=1)
+            self.bvlan = ui.ToggleButton(text='vlan', flex=1)
+            #self.bmpls = ui.ToggleButton(text='mpls', flex=1)
+            self.bpload = ui.ToggleButton(text='payload', checked=1, flex=1)
 
     @flx.reaction('beth.checked', 'btcp.checked', 'bvxlan.checked', 'bpload.checked', 'bip6.checked', 'bvlan.checked')
     def _check_changed(self, *events):
         if self.beth.checked:
-            self.root.panel_main.panel_tx.detl.ee.e_src.set_disabled(0)
-            self.root.detl.ee.e_dst.set_disabled(0)
+            self.root.pnl_tx.detl.ee.e_src.set_disabled(0)
+            self.root.pnl_tx.detl.ee.e_dst.set_disabled(0)
         else:
-            self.root.detl.ee.e_src.set_disabled(1)
-            self.root.detl.ee.e_dst.set_disabled(1)
+            self.root.pnl_tx.detl.ee.e_src.set_disabled(1)
+            self.root.pnl_tx.detl.ee.e_dst.set_disabled(1)
         if self.btcp.checked:
-            self.root.detl.etcp.prot.set_text("tcp")
+            self.root.pnl_tx.detl.etcp.prot.set_text("tcp")
         else:
-            self.root.detl.etcp.prot.set_text("udp")
+            self.root.pnl_tx.detl.etcp.prot.set_text("udp")
         if self.bvxlan.checked:
-            self.root.detl.eip4.e_src.set_disabled(0)
-            self.root.detl.eip4.e_dst.set_disabled(0)
-            self.root.detl.evudp.e_src.set_disabled(0)
-            self.root.detl.evudp.e_dst.set_disabled(0)
-            self.root.detl.evxlan.e_vni.set_disabled(0)
+            self.root.pnl_tx.detl.eip4.e_src.set_disabled(0)
+            self.root.pnl_tx.detl.eip4.e_dst.set_disabled(0)
+            self.root.pnl_tx.detl.evudp.e_src.set_disabled(0)
+            self.root.pnl_tx.detl.evudp.e_dst.set_disabled(0)
+            self.root.pnl_tx.detl.evxlan.e_vni.set_disabled(0)
         else:
-            self.root.detl.eip4.e_src.set_disabled(1)
-            self.root.detl.eip4.e_dst.set_disabled(1)
-            self.root.detl.evudp.e_src.set_disabled(1)
-            self.root.detl.evudp.e_dst.set_disabled(1)
-            self.root.detl.evxlan.e_vni.set_disabled(1)
+            self.root.pnl_tx.detl.eip4.e_src.set_disabled(1)
+            self.root.pnl_tx.detl.eip4.e_dst.set_disabled(1)
+            self.root.pnl_tx.detl.evudp.e_src.set_disabled(1)
+            self.root.pnl_tx.detl.evudp.e_dst.set_disabled(1)
+            self.root.pnl_tx.detl.evxlan.e_vni.set_disabled(1)
         if self.bpload.checked:
-            self.root.detl.epld.payload.set_disabled(0)
+            self.root.pnl_tx.detl.epld.payload.set_disabled(0)
         else:
-            self.root.detl.epld.payload.set_disabled(1)
+            self.root.pnl_tx.detl.epld.payload.set_disabled(1)
         if self.bip6.checked:
-            self.root.detl.eip4.line.set_text('ipv6')
+            self.root.pnl_tx.detl.eip4.line.set_text('ipv6')
         else:
-            self.root.detl.eip4.line.set_text('ipv4')
+            self.root.pnl_tx.detl.eip4.line.set_text('ipv4')
         if self.bvlan.checked:
-            self.root.detl.evxlan.e_vlan.set_disabled(0)
+            self.root.pnl_tx.detl.evxlan.e_vlan.set_disabled(0)
         else:
-            self.root.detl.evxlan.e_vlan.set_disabled(1)
+            self.root.pnl_tx.detl.evxlan.e_vlan.set_disabled(1)
 
 
-class EEth(ui.HFix):
+class EEth(flx.PyWidget):
     def init(self):
+      with flx.HFix():
         self.line = flx.Label(text='Ethernet:', flex=2)
         self.e_src = flx.LineEdit(placeholder_text='00:11:22:33:44:55', flex=10)
         self.ar = flx.Label(text='->', flex=1)
         self.e_dst = flx.LineEdit(placeholder_text='00:11:22:33:44:56', flex=10)
         self.bt_dtl = flx.Button(text='...', flex=1)
 
-class EIP4(ui.HFix):
+class EIP4(flx.PyWidget):
     def init(self):
+      with flx.HFix():
         self.line = flx.Label(text='ip4:',flex=2)
         self.e_src = flx.LineEdit(placeholder_text='192.168.1.1', flex=10)
         self.ar = flx.Label(text='->', flex=1)
         self.e_dst = flx.LineEdit(placeholder_text='192.168.1.2', flex=10)
         self.bt_dtl = flx.Button(text='...', flex=1)
 
-class EUDP(ui.HFix):
+class EUDP(flx.PyWidget):
     def init(self):
+      with flx.HFix():
         self.prot = flx.Label(text='udp:',flex=2)
         self.e_src = flx.LineEdit(placeholder_text='5464', flex=10)
         self.ar = flx.Label(text='->', flex=1)
         self.e_dst = flx.LineEdit(placeholder_text='250', flex=10)
         self.bt_dtl = flx.Button(text='...',flex=1)
 
-class EVXLAN(ui.HFix):
+class EVXLAN(flx.PyWidget):
     def init(self):
+      with flx.HFix():
         self.line = flx.Label(text='vxlan:',flex=2)
         self.line2 = flx.Label(text='VNI:',flex=1)
         self.e_vni = flx.LineEdit(placeholder_text='250', flex=9)
@@ -144,16 +127,18 @@ class EVXLAN(ui.HFix):
         self.e_vlan = flx.LineEdit(placeholder_text='123', flex=8)
         self.bt_dtl = flx.Button(text='...', flex=1)
 
-class EIP4I(ui.HFix):
+class EIP4I(flx.PyWidget):
     def init(self):
+      with flx.HFix():
         self.line = flx.Label(text='ip4i:', flex=2)
         self.e_src = flx.LineEdit(placeholder_text='192.168.1.1', flex=10)
         self.ar = flx.Label(text='->', flex=1)
         self.e_dst = flx.LineEdit(placeholder_text='192.168.1.2', flex=10)
         self.bt_dtl = flx.Button(text='...', flex=1)
 
-class ETCP(ui.HFix):
-   def init(self):
+class ETCP(flx.PyWidget):
+    def init(self):
+      with flx.HFix():
 #        self.cb = flx.ComboBox(editable=False, options=('tcp', 'udp'),selected_key='tcp', flex=2)
         self.prot = flx.Label(text='udp:',flex=2)
         self.e_src = flx.LineEdit(placeholder_text='5464',flex=10)
@@ -161,13 +146,14 @@ class ETCP(ui.HFix):
         self.e_dst = flx.LineEdit(placeholder_text='250',flex=10)
         self.bt_dtl = flx.Button(text='...',flex=1)
 
-class EPLD(ui.HFix):
-   def init(self):
+class EPLD(flx.PyWidget):
+    def init(self):
+      with flx.HFix():
        self.line = flx.Label(text='payload:', flex=2)
        self.payload = flx.LineEdit(placeholder_text='ABCD',flex=21)
        self.bt_dtl = flx.Button(text='...',flex=1)
 
-class EDP(ui.HFix):
+class EDP(flx.PyWidget):
     CSS = """
     .flx-EDP {
         text-align: left;
@@ -179,9 +165,10 @@ class EDP(ui.HFix):
     }
     """
     def init(self):
+      with flx.HFix():
         self.lb = ui.Label(wrap=1,text='Ether(src="00:11:22:33:44::55", dst="00:11:22:33:44:66")/IP(src=')
 
-class ERAW(ui.VFix):
+class ERAW(ui.PyWidget):
     def init(self):
         with ui.HFix(flex=1):
             self.vd = flx.Label(text='valid/invalid', flex=2)
@@ -193,7 +180,6 @@ class ERAW(ui.VFix):
 class EditDetail(flx.PyWidget):
     def init(self):
         with ui.VFix():
-            self.en = EName(flex=1)
             self.el = Eline(flex=1)
             self.ee = EEth(flex=1)
             self.eip4 = EIP4(flex=1)
