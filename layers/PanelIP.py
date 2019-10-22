@@ -10,10 +10,10 @@ class LayerIP(LayerBase):
 		super().init(IP(src='192.168.1.1'))
 		self.pkt_load()
 		with self._cont:
-			flx.Label(text="Src")
-			self.txt_src = flx.LineEdit(text=lambda: self.src)
-			flx.Label(text="Dst")
-			self.txt_dst = flx.LineEdit(text=lambda: self.dst)
+			flx.Label(text="IPv4", flex=2)
+			self.txt_src = flx.LineEdit(text=lambda: self.src, flex=10)
+			flx.Label(text="->" ,flex=1)
+			self.txt_dst = flx.LineEdit(text=lambda: self.dst ,flex=10)
 		
 	@flx.reaction('btn_detail.pointer_click')
 	def on_detail(self, *events):

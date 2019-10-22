@@ -6,9 +6,9 @@ class LayerBase(flx.PyWidget):
 	hex = flx.StringProp(settable=True)
 	def init(self, pkt):
 		self.pkt = pkt
-		with flx.HBox():
-			self._cont = flx.HBox(flex=1)
-			self.btn_detail = flx.Button(text="...")
+		with flx.HFix():
+			self._cont = flx.HFix(flex=23)
+			self.btn_detail = flx.Button(text="...", flex=1)
 		
 	def pkt_update(self):
 		self.set_scapy(self.pkt.show(dump=True))
