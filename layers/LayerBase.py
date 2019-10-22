@@ -4,8 +4,7 @@ from flexx import flx
 class LayerBase(flx.PyWidget):
 	scapy = flx.StringProp(settable=True)
 	hex = flx.StringProp(settable=True)
-	def init(self, pkt):
-		self.pkt = pkt
+	def init(self):
 		with flx.HFix():
 			self._cont = flx.HFix(flex=23)
 			self.btn_detail = flx.Button(text="...", flex=1)
@@ -14,6 +13,14 @@ class LayerBase(flx.PyWidget):
 		self.set_scapy(self.pkt.show(dump=True))
 		self.set_hex(hexdump(self.pkt, dump=True))
 		# tell tx panel to update
+	
+	def pkt_load(self, pkt):
+		self.pkt = pkt
+		if pkt:
+			self.btn_detail.set_disabled(0)
+		else:
+			self.btn_detail.set_disabled(1)
+	
 
 
 class PanelLayer(flx.PyWidget):

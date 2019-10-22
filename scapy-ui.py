@@ -73,6 +73,7 @@ class ScapyUI(flx.PyWidget):
 	def load_config(self, name, pkt):
 		self.pnl_source.txt_name.set_text(name)
 		self.set_status("{}: {}".format(name, repr(pkt)))
+		self.pnl_tx.set_packet(pkt)
 
 	def save_config(self, name):
 		pkt = self.pnl_tx.get_packet()

@@ -109,10 +109,15 @@ class EIP4(flx.PyWidget):
 ###
 
     def get_elm(self):
-        return IP(src=self.lip.src, dst=self.lip.dst)
+    	self.lip.pkt_update()
+    	return self.lip.pkt
+        # return IP(src=self.lip.src, dst=self.lip.dst)
 
     def get_dp_elm(self):
         return "IP(src=\"" + self.lip.src + "\", dst=\"" + self.lip.dst + "\")"
+    
+    def set_pkt(self, pkt):
+        self.lip.pkt_load(pkt)
 
 class EUDP(flx.PyWidget):
     def init(self):
@@ -335,7 +340,11 @@ class PanelTx(flx.PyWidget):
             return self.get_eth_dp_elm()+'/'+self.get_ipi_dp_elm()+'/'+self.get_tcp_dp_elm()+'/'+self.get_pld_dp_elm()
 
     def set_raw(self):
-       self.detl.eraw.dp.set_dp(self.get_dp_packet()) 
+       self.detl.eraw.dp.set_dp(self.get_dp_packet())
+       
+    def set_packet(self, pkt):
+    	self.pkt = pkt
+    	self.detl.eip4.set_pkt(pkt[IP]) 
 
 #q=flx.App(QuickEditPanel);q.serve('');flx.start()
 

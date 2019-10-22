@@ -7,8 +7,7 @@ class LayerIP(LayerBase):
 	dst = flx.StringProp(settable=True)
 	ttl = flx.StringProp(settable=True)
 	def init(self):
-		super().init(IP(src='192.168.1.1'))
-		self.pkt_load()
+		super().init()
 		with self._cont:
 			flx.Label(text="IPv4", flex=2)
 			self.txt_src = flx.LineEdit(text=lambda: self.src, flex=10)
@@ -27,9 +26,16 @@ class LayerIP(LayerBase):
 		self.set_dst(self.txt_dst.text.strip())
 		super().pkt_update()
 
-	def pkt_load(self):
-		self.set_src(self.pkt.fields.get('src',""))
-		self.set_dst(self.pkt.fields.get('dst',""))
+	def pkt_load(self, pkt):
+		super().pkt_load(pkt)
+		if pkt:
+			self.set_src(self.pkt.fields.get('src',""))
+			self.set_dst(self.pkt.fields.get('dst',""))
+			self.txt_src.set_disabled(0)
+			self.txt_dst.set_disabled(0)
+		else:
+			self.txt_src.set_disabled(1)
+			self.txt_dst.set_disabled(1)
 	
 	def pkt_update(self):
 		self.pkt.src = self.src
