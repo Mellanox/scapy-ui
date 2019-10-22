@@ -4,7 +4,7 @@ from flexx import flx
 class LayerBase(flx.PyWidget):
 	scapy = flx.StringProp(settable=True)
 	hex = flx.StringProp(settable=True)
-	def init(self):
+	def init(self, pkt):
 		with flx.HFix():
 			self._cont = flx.HFix(flex=23)
 			self.btn_detail = flx.Button(text="...", flex=1)

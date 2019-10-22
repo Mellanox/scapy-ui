@@ -6,13 +6,14 @@ class LayerIP(LayerBase):
 	src = flx.StringProp(settable=True)
 	dst = flx.StringProp(settable=True)
 	ttl = flx.StringProp(settable=True)
-	def init(self):
-		super().init()
+	def init(self, pkt):
+		super().init(pkt)
 		with self._cont:
 			flx.Label(text="IPv4", flex=2)
 			self.txt_src = flx.LineEdit(text=lambda: self.src, flex=10)
 			flx.Label(text="->" ,flex=1)
 			self.txt_dst = flx.LineEdit(text=lambda: self.dst ,flex=10)
+		self.pkt_load(pkt)
 		
 	@flx.reaction('btn_detail.pointer_click')
 	def on_detail(self, *events):

@@ -103,7 +103,8 @@ class EEth(flx.PyWidget):
 
 class EIP4(flx.PyWidget):
     def init(self):
-      self.lip = LayerIP()
+      self.pkt = IP(dst='192.168.10.2',src='192.168.10.1')
+      self.lip = LayerIP(self.pkt)
 ###
 #      with flx.HFix():
 #        self.line = flx.Label(text='ip4:',flex=2)
@@ -115,11 +116,11 @@ class EIP4(flx.PyWidget):
 
     def get_elm(self):
         self.lip.pkt_update()
-        return self.lip.pkt
+        return self.pkt
         # return IP(src=self.lip.src, dst=self.lip.dst)
 
     def get_dp_elm(self):
-        return "IP(src=\"" + self.lip.src + "\", dst=\"" + self.lip.dst + "\")"
+        return "IP(src=\"" + self.pkt.src + "\", dst=\"" + self.pkt.dst + "\")"
     
     def set_pkt(self, pkt):
         self.lip.pkt_load(pkt)
@@ -306,7 +307,7 @@ class ESend(flx.PyWidget):
         packet = self.root.pnl_tx.get_packet()
         packet.show()
         print("Will send a packet")
-        sendp(packets, iface=self.ifname, count=1)
+        sendp(packet, iface=self.ifname, count=1)
 
 class PanelTx(flx.PyWidget):
     def init(self):
@@ -369,6 +370,7 @@ class PanelTx(flx.PyWidget):
 
     def get_packet(self):
         if self.detl.el.bvxlan.checked:
+            print("vxlan packet")
             return self.get_eth_elm()/self.get_ip_elm()/self.get_vudp_elm()/self.get_vxlan_elm()/self.get_ipi_elm()/self.get_tcp_elm()/self.get_pld_elm()
         elif self.detl.el.bvlan.checked:
             return self.get_eth_elm()/self.get_vlan_elm()/self.get_ipi_elm()/self.get_tcp_elm()/self.get_pld_elm()
