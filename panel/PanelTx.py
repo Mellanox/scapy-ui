@@ -14,19 +14,6 @@ class TxItem(IntEnum):
 #    mpls
     payload = 7
     
-class Load(ui.VFix):
-    def init(self):
-        self.load = flx.Button(text='Load Pcap')
-        self.bsn = flx.Button(text='Sniff')
-
-class Recent(ui.VFix):
-    def init(self):
-        self.lb = ui.Label(flex=1,text='Recent')
-        #load the cfg itmes ---- TBD
-        with ui.TreeWidget(flex=20, max_selected=1):
-            for t in ['foo', 'bar', 'spam', 'eggs']:
-                ui.TreeItem(text=t, checked=None, )
-
 class Eline(flx.PyWidget): 
 
     CSS = """
@@ -170,9 +157,10 @@ class EDP(flx.PyWidget):
 
 class ERAW(ui.PyWidget):
     def init(self):
+      with ui.VFix():
         with ui.HFix(flex=1):
             self.vd = flx.Label(text='valid/invalid', flex=2)
-            self.ept1 = flx.Label(text=' ', flex=8)
+            self.ept1 = flx.Label(text=' ', flex=15)
             self.hex = flx.Label(text='hex', flex=1)
             self.pcap = flx.Label(text='save pcap', flex=2)
         self.dp = EDP(flex=20)
@@ -206,12 +194,6 @@ class ESend(ui.VBox):
 
 class PanelTx(flx.PyWidget):
     def init(self):
-#        with ui.HFix():
-#            self.set_flex(0)
-#            with ui.VFix(flex=2):
-#                self.rec = Recent(flex=20)
-#                self.ocfg = Load(flex=2)
-#            with flx.GridLayout(ncolumns=1):
         with ui.VFix(flex=20):
             self.detl = EditDetail(flex=20)
             self.snd = ESend(flex=2)
