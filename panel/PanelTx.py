@@ -272,6 +272,8 @@ class PanelTx(flx.PyWidget):
         with ui.VFix(flex=20):
             self.detl = EditDetail(flex=20)
             self.snd = ESend(flex=2)
+        self.outer_map = {IP:self.detl.eip4, Ether:self.detl.ee, UDP:self.detl.evudp, VXLAN:self.detl.evxlan, TCP:self.detl.etcp}
+        self.inner_map = {IP:self.detl.eip4i}
 
     def get_eth_elm(self):
         if self.detl.el.beth.checked:
@@ -343,8 +345,23 @@ class PanelTx(flx.PyWidget):
        self.detl.eraw.dp.set_dp(self.get_dp_packet())
        
     def set_packet(self, pkt):
-    	self.pkt = pkt
-    	self.detl.eip4.set_pkt(pkt[IP]) 
+        self.pkt = pkt
+        for cls,layer in self.outer_map:
+        	layer.set_pkt(None)
+        for cls,layer in self.inner_map:
+        	layer.set_pkt(None)
+        outer = 1
+        while pkt:
+        	if outer:
+        		layer = self.outer_map[type(pkt)]
+        		layer.set_pkt(pkt)
+        	else:
+        		layer = self.outer_map[type(pkt)]
+        		layer.set_pkt(pkt)
+        	if type(pkt) == VXLAN:
+        		outer = 0
+        	pkt = pkt.get_payload()
+	# self.detl.eip4.set_pkt(pkt[IP]) 
 
 #q=flx.App(QuickEditPanel);q.serve('');flx.start()
 
