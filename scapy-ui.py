@@ -17,6 +17,8 @@ class ScapyUI(flx.PyWidget):
 		.link {text-decoration:underline; color:blue;}
 		.link:hover {background-color:#EEEEEE;}
 		.link:active {text-decoration:none}
+		.item {color:blue;}
+		.item:hover {background-color:#EEEEEE;}
 		.title {background: #eff;}
 		.no_border {border: 0px}
 		.disabled {opacity: 0.6; cursor: not-allowed;}
@@ -30,7 +32,7 @@ class ScapyUI(flx.PyWidget):
 				with flx.VBox(flex=8):
 					LayerIP()
 					self.pnl_source = PanelSource() 
-					self.pnl_tx = PanelTx(flex=10)
+					self.pnl_tx = PanelTx(flex=15)
 			self.lbl_status = flx.Label(text='...')
 		self.pnl_active = self.pnl_main
 		self.pnl_rx = PanelRx()

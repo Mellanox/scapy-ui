@@ -6,7 +6,7 @@ import os
 
 class ConfigItem(flx.PyWidget):
 	def init(self, text):
-		self.label = flx.Label(text = text, flex=1)
+		self.label = flx.Label(text = text, flex=1, css_class="item")
 
 	@flx.reaction('label.pointer_click')
 	def on_click(self, *events):
@@ -18,7 +18,7 @@ class PanelConfig(flx.PyWidget):
 		self.lst_names = []
 		with flx.VBox():
 			self.lst_config = flx.GroupWidget(title="Recent:", flex=1, css_class="list")
-			self.btn_load = flx.Label(text='Load Pcap...', css_class="link")
+			self.btn_load = flx.Button(text='Load Pcap...')
 			self.btn_sniff = flx.Button(text='Sniff...')
 		self.load_names()
 		
