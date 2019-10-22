@@ -92,7 +92,7 @@ class EEth(flx.PyWidget):
 
 class EIP4(flx.PyWidget):
     def init(self):
-      LayerIP(packets)
+      LayerIP()
 ###
 #      with flx.HFix():
 #        self.line = flx.Label(text='ip4:',flex=2)
