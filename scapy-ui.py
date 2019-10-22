@@ -30,7 +30,7 @@ class ScapyUI(flx.PyWidget):
 			with flx.HSplit(flex=1):
 				self.pnl_config = PanelConfig(flex=2)
 				with flx.VBox(flex=8):
-					LayerIP()
+					#LayerIP()
 					self.pnl_source = PanelSource() 
 					self.pnl_tx = PanelTx(flex=15)
 			self.lbl_status = flx.Label(text='...')

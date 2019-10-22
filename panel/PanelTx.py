@@ -1,5 +1,9 @@
 from flexx import flx, ui
 from enum import IntEnum
+from scapy.all import *
+from layers.PanelIP import *
+
+packets = Ether()/IP(dst="11.22.33.44",src="1.2.3.4")/UDP()
 
 class TxItem(IntEnum):
     eth = 0
@@ -40,6 +44,7 @@ class Eline(flx.PyWidget):
 
     @flx.reaction('beth.checked', 'btcp.checked', 'bvxlan.checked', 'bpload.checked', 'bip6.checked', 'bvlan.checked')
     def _check_changed(self, *events):
+        packets[0].show()
         if self.beth.checked:
             self.root.pnl_tx.detl.ee.e_src.set_disabled(0)
             self.root.pnl_tx.detl.ee.e_dst.set_disabled(0)
@@ -51,14 +56,14 @@ class Eline(flx.PyWidget):
         else:
             self.root.pnl_tx.detl.etcp.prot.set_text("udp")
         if self.bvxlan.checked:
-            self.root.pnl_tx.detl.eip4.e_src.set_disabled(0)
-            self.root.pnl_tx.detl.eip4.e_dst.set_disabled(0)
+            #self.root.pnl_tx.detl.eip4.e_src.set_disabled(0)
+            #self.root.pnl_tx.detl.eip4.e_dst.set_disabled(0)
             self.root.pnl_tx.detl.evudp.e_src.set_disabled(0)
             self.root.pnl_tx.detl.evudp.e_dst.set_disabled(0)
             self.root.pnl_tx.detl.evxlan.e_vni.set_disabled(0)
         else:
-            self.root.pnl_tx.detl.eip4.e_src.set_disabled(1)
-            self.root.pnl_tx.detl.eip4.e_dst.set_disabled(1)
+            #self.root.pnl_tx.detl.eip4.e_src.set_disabled(1)
+            #self.root.pnl_tx.detl.eip4.e_dst.set_disabled(1)
             self.root.pnl_tx.detl.evudp.e_src.set_disabled(1)
             self.root.pnl_tx.detl.evudp.e_dst.set_disabled(1)
             self.root.pnl_tx.detl.evxlan.e_vni.set_disabled(1)
@@ -66,10 +71,10 @@ class Eline(flx.PyWidget):
             self.root.pnl_tx.detl.epld.payload.set_disabled(0)
         else:
             self.root.pnl_tx.detl.epld.payload.set_disabled(1)
-        if self.bip6.checked:
-            self.root.pnl_tx.detl.eip4.line.set_text('ipv6')
-        else:
-            self.root.pnl_tx.detl.eip4.line.set_text('ipv4')
+        #if self.bip6.checked:
+            #self.root.pnl_tx.detl.eip4.line.set_text('ipv6')
+        #else:
+            #self.root.pnl_tx.detl.eip4.line.set_text('ipv4')
         if self.bvlan.checked:
             self.root.pnl_tx.detl.evxlan.e_vlan.set_disabled(0)
         else:
@@ -87,12 +92,15 @@ class EEth(flx.PyWidget):
 
 class EIP4(flx.PyWidget):
     def init(self):
-      with flx.HFix():
-        self.line = flx.Label(text='ip4:',flex=2)
-        self.e_src = flx.LineEdit(placeholder_text='192.168.1.1', flex=10)
-        self.ar = flx.Label(text='->', flex=1)
-        self.e_dst = flx.LineEdit(placeholder_text='192.168.1.2', flex=10)
-        self.bt_dtl = flx.Button(text='...', flex=1)
+      LayerIP(packets)
+###
+#      with flx.HFix():
+#        self.line = flx.Label(text='ip4:',flex=2)
+#        self.e_src = flx.LineEdit(placeholder_text='192.168.1.1', flex=10)
+#        self.ar = flx.Label(text='->', flex=1)
+#        self.e_dst = flx.LineEdit(placeholder_text='192.168.1.2', flex=10)
+#        self.bt_dtl = flx.Button(text='...', flex=1)
+###
 
 class EUDP(flx.PyWidget):
     def init(self):
@@ -191,6 +199,11 @@ class ESend(ui.VBox):
             self.llv = ui.LineEdit(placeholder_text='100', flex=2)
             self.lept3 = ui.Label(text=" ", flex=3)
             self.snd_btn = ui.Button(text='Send', flex=2)
+
+    @flx.reaction('snd_btn.pointer_click')
+    def _send_packet(self, *events):
+        print("Will send a packet")
+        #sendp(packets,iface='eth0',count=1)
 
 class PanelTx(flx.PyWidget):
     def init(self):
