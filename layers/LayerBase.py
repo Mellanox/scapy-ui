@@ -27,7 +27,7 @@ class PanelLayer(flx.PyWidget):
 			flx.Label(flex=1)
 			self.lbl_hex = flx.Label(wrap=1, text=lambda: self._parent.hex, flex=5)
 			flx.Label(flex=1)
-			self.btn_save = flx.Button(title="", text='Back', flex=1)
+			self.btn_save = flx.Button(title="", text='Apply', flex=1)
 
 	@flx.reaction('btn_save.pointer_click')
 	def on_save(self, *events):

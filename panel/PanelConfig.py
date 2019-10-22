@@ -70,7 +70,7 @@ class PanelConfig(flx.PyWidget):
 
 	@flx.reaction('btn_load.pointer_click')
 	def on_pcap_load(self, *events):
-		self.root.show_rx()
+		self.root.load_pcap()
 
 	@flx.reaction('btn_sniff.pointer_click')
 	def on_sniff(self, *events):
@@ -95,3 +95,4 @@ class PanelConfig(flx.PyWidget):
 			else:
 				pkt.add_payload(layer)
 		return pkt
+
