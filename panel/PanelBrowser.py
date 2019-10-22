@@ -21,4 +21,7 @@ class PanelBrowser(flx.PyWidget):
 
 	def set_callback(self, callback):
 		self._callback = callback
+		
+	def on_apply(self):
+		pass
 

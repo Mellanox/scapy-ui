@@ -27,8 +27,7 @@ class PanelSource(flx.PyWidget):
 
 	@flx.reaction('btn_new.pointer_click')
 	def on_new(self, *events):
-		self.txt_name.set_text("")
-		self.root.new_config()
+		self.root.load_config("", Ether())
 
 	@flx.reaction('txt_name.text')
 	def on_name(self, *events):

@@ -50,7 +50,8 @@ class Relay(flx.Component):
         self.sniffer.start()
 
     def sniff_stop(self):
-        self.sniffer.stop()
+        if self.sniffer:
+            self.sniffer.stop()
 
     def print_packet(self):
         self.curr_idx = len(p_list)
@@ -128,6 +129,9 @@ class PanelRx(flx.PyWidget):
         msg = relay.print_packet()
         self.view.add_labels(msg)
 
+    def on_apply(self):
+        relay.sniff_stop()
+
 class PanelRxView(flx.PyWidget):
     CSS = """
         .detail {boarder: solid green 3px; background:white;}
@@ -184,6 +188,7 @@ class PanelRxView(flx.PyWidget):
 
     def show_hexdump(self, msg):
         self.hexdump.set_text(msg)
+
 
 if __name__ == '__main__':
     a = flx.App(PanelRx)

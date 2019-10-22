@@ -13,6 +13,7 @@ from layers.PanelIP import *
 
 class ScapyUI(flx.PyWidget):
 	CSS = """
+		.center {align:center}
 		.status {background-color:#f0f0f0;color:#aaaaaa}
 		.list {overflow:auto;}
 		.link {text-decoration:underline; color:blue;}
@@ -42,6 +43,7 @@ class ScapyUI(flx.PyWidget):
 				self.pnl_rx.set_parent(None)
 				self.pnl_browser = PanelBrowser(flex=1)
 				self.pnl_browser.set_parent(None)
+		self.load_config("test", Ether())
 				
 	@flx.reaction('btn_back.pointer_click')
 	def on_back(self, *events):
@@ -60,6 +62,8 @@ class ScapyUI(flx.PyWidget):
 		pnl.set_parent(self.pnl_root) #_jswidget)  # Attach
 		print("switch to panel: {}".format(pnl))
 		if self.pnl_active != None:
+			if self.pnl_active != self.pnl_main:
+				self.pnl_active.on_apply()
 			self.pnl_active.set_parent(None)  # Detach
 		self.pnl_active = pnl
 		
@@ -72,24 +76,20 @@ class ScapyUI(flx.PyWidget):
 
 	def load_config(self, name, pkt):
 		self.pnl_source.txt_name.set_text(name)
+		self.pnl_tx.set_pkt(pkt)
 		self.set_status("{}: {}".format(name, repr(pkt)))
-		self.pnl_tx.set_packet(pkt)
-		self.pnl_tx.set_raw()
-
 
 	def save_config(self, name):
-		pkt = self.pnl_tx.get_packet()
-		self.pnl_tx.set_raw()
+		pkt = self.pnl_tx.pkt
+		self.set_status(repr(pkt))
 		self.pnl_config.save_config(name, pkt)
 
 	def del_config(self, name):
 		self.set_status("")
 		self.pnl_config.del_config(name)
 
-	def new_config(self):
-		self.set_status("")
-
 	def set_status(self, status):
+		print(status)
 		self.lbl_status.set_text(status)
 
 	def on_file(self, file):
