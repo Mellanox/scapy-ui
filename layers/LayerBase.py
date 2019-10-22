@@ -12,14 +12,16 @@ class LayerBase(flx.PyWidget):
 	def pkt_update(self):
 		self.set_scapy(self.pkt.show(dump=True))
 		self.set_hex(hexdump(self.pkt, dump=True))
-		# tell tx panel to update
+		self.root.pnl_tx.on_packet_update()
 	
 	def pkt_load(self, pkt):
 		self.pkt = pkt
 		if pkt:
-			self.btn_detail.set_disabled(0)
+#			self.btn_detail.set_disabled(0)
+			self.set_parent(self.root.pnl_tx.detl._root)
 		else:
-			self.btn_detail.set_disabled(1)
+			self.set_parent(None)
+#			self.btn_detail.set_disabled(1)
 	
 
 

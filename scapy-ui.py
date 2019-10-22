@@ -42,6 +42,7 @@ class ScapyUI(flx.PyWidget):
 				self.pnl_rx.set_parent(None)
 				self.pnl_browser = PanelBrowser(flex=1)
 				self.pnl_browser.set_parent(None)
+		self.load_config("test", Ether())
 				
 	@flx.reaction('btn_back.pointer_click')
 	def on_back(self, *events):
@@ -72,20 +73,17 @@ class ScapyUI(flx.PyWidget):
 
 	def load_config(self, name, pkt):
 		self.pnl_source.txt_name.set_text(name)
-		self.set_status("{}: {}".format(name, repr(pkt)))
 		self.pnl_tx.set_packet(pkt)
+		self.set_status("{}: {}".format(name, repr(pkt)))
 
 	def save_config(self, name):
-		pkt = self.pnl_tx.get_packet()
-		self.pnl_tx.set_raw()
+		pkt = self.pnl_tx.pkt
+		self.set_status(repr(pkt))
 		self.pnl_config.save_config(name, pkt)
 
 	def del_config(self, name):
 		self.set_status("")
 		self.pnl_config.del_config(name)
-
-	def new_config(self):
-		self.set_status("")
 
 	def set_status(self, status):
 		self.lbl_status.set_text(status)
