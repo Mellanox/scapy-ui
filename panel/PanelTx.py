@@ -44,7 +44,7 @@ class Eline(flx.PyWidget):
 
     @flx.reaction('beth.checked', 'btcp.checked', 'bvxlan.checked', 'bpload.checked', 'bip6.checked', 'bvlan.checked')
     def _check_changed(self, *events):
-        packets[0].show()
+        print(packets[0])
         if self.beth.checked:
             self.root.pnl_tx.detl.ee.e_src.set_disabled(0)
             self.root.pnl_tx.detl.ee.e_dst.set_disabled(0)

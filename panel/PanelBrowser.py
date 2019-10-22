@@ -8,11 +8,14 @@ class PanelBrowser(flx.PyWidget):
 	
 	@flx.reaction('browser.selected')
 	def on_select(self, *events):
-		file = self.browser.path
+		file = events[-1].filename
 		self.root.set_status(file)
+		print (file.lower())
+		print(events)
 		if file.lower().endswith(".pcap"):
 			if self._callback:
 				self._callback.on_file(file)
+				print("callback:")
 		else:
 			self.root.set_status("Please select *.pcap file")
 

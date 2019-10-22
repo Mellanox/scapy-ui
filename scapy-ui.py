@@ -90,9 +90,12 @@ class ScapyUI(flx.PyWidget):
 		self.lbl_status.set_text(status)
 		
 	def on_file(self, file):
-		set_status("Got file: {}".format(file))
+		print("in callback:")
+		self.set_status("Got file: {}".format(file))
+		pkts = rdpcap(file)
+		self.show_rx()
+		self.pnl_rx.load_pkts(pkts)
 		
-	@flx.action
 	def load_pcap(self):
 		self.pnl_browser.set_callback(self)
 		self.show_panel(self.pnl_browser)
