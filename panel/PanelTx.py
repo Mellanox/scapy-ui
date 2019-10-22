@@ -97,6 +97,10 @@ class EEth(flx.PyWidget):
     def get_dp_elm(self):
         return "Ether(src=\"" + self.e_src.text + "\"," + "dst=\"" + self.e_dst.text + "\")"
 
+    def set_elm(self, pkt):
+        self.e_src.set_text(pkt.fields.get('src',""))
+        self.e_dst.set_text(pkt.fields.get('dst',""))
+
 class EIP4(flx.PyWidget):
     def init(self):
       self.lip = LayerIP()
@@ -120,6 +124,10 @@ class EIP4(flx.PyWidget):
     def set_pkt(self, pkt):
         self.lip.pkt_load(pkt)
 
+#    def set_elm(self, pkt):
+#        self.e_src.set_text(self.pkt.fields.get('src',""))
+#        self.e_dst.set_text(self.pkt.fields.get('dst',""))
+
 class EUDP(flx.PyWidget):
     def init(self):
       with flx.HFix():
@@ -130,10 +138,14 @@ class EUDP(flx.PyWidget):
         self.bt_dtl = flx.Button(text='...',flex=1)
 
     def get_elm(self):
-        return UDP(sport=self.e_src.text, dport=self.e_dst.text)
+        return UDP(sport=int(self.e_src.text), dport=int(self.e_dst.text))
 
     def get_dp_elm(self):
         return "UDP(sport=\"" + self.e_src.text + "\", dport=\"" + self.e_dst.text + "\")"
+
+    def set_elm(self,pkt):
+        self.e_src.set_text(str(pkt.fields.get('sport',"")))
+        self.e_dst.set_text(str(pkt.fields.get('dport',"")))
 
 class EVXLAN(flx.PyWidget):
     def init(self):
@@ -152,11 +164,17 @@ class EVXLAN(flx.PyWidget):
     def get_vlan_elm(self):
         return Dot1Q(vlan=self.e_vlan.text)
 
-    def get_dp_vxlan_elm(self):
+    def get_vxlan_dp_elm(self):
         return "VXLAN(vni=\"" + self.e_vni.text + "\")"
 
-    def get_dp_vlan_elm(self):
+    def get_vlan_dp_elm(self):
         return "Dot1Q(vlan=\""+ self.e_vlan.text + "\")"
+
+    def set_vxlan_elm(self, pkt):
+        self.e_vni.set_text(pkt.fields.get('vni',""))
+
+    def set_vlan_elm(self, pkt):
+        self.e_vlan.set_text(pkt.fields.get('vxlan',""))
 
 class EIP4I(flx.PyWidget):
     def init(self):
@@ -172,6 +190,10 @@ class EIP4I(flx.PyWidget):
 
     def get_dp_elm(self):
         return "IP(src=\"" + self.e_src.text + "\", dst=\"" + self.e_dst.text + "\")"
+
+    def set_elm(self, pkt):
+        self.e_src.set_text(pkt.fields.get('src',""))
+        self.e_dst.set_text(pkt.fields.get('dst',""))
 
 class ETCP(flx.PyWidget):
     def init(self):
@@ -195,6 +217,10 @@ class ETCP(flx.PyWidget):
         else:
             return "UDP(sport=\"" + self.e_src.text + "\", dport=\"" + self.e_dst.text + "\")"
 
+    def set_elm(self,pkt):
+        self.e_src.set_text(str(pkt.fields.get('sport',"")))
+        self.e_dst.set_text(str(pkt.fields.get('dport',"")))
+
 class EPLD(flx.PyWidget):
     def init(self):
       with flx.HFix():
@@ -207,6 +233,9 @@ class EPLD(flx.PyWidget):
 
     def get_dp_elm(self):
         return "Raw(load=\"" + self.payload.text +"\")"
+
+    def set_elm(self, pkt):
+        self.payload.set_text(bytes.decode(pkt.fields.get('load',"")))
 
 class EDP(flx.PyWidget):
     CSS = """
@@ -225,6 +254,7 @@ class EDP(flx.PyWidget):
 
     def set_dp(self, pkt):
         self.lb.set_text(pkt)
+        
 
 class ERAW(ui.PyWidget):
     def init(self):
@@ -355,25 +385,106 @@ class PanelTx(flx.PyWidget):
 
     def set_raw(self):
        self.detl.eraw.dp.set_dp(self.get_dp_packet())
-       
-    def set_packet(self, pkt):
-        self.pkt = pkt
-        for cls,layer in self.outer_map:
-        	layer.set_pkt(None)
-        for cls,layer in self.inner_map:
-        	layer.set_pkt(None)
-        outer = 1
-        while pkt:
-        	if outer:
-        		layer = self.outer_map[type(pkt)]
-        		layer.set_pkt(pkt)
-        	else:
-        		layer = self.outer_map[type(pkt)]
-        		layer.set_pkt(pkt)
-        	if type(pkt) == VXLAN:
-        		outer = 0
-        	pkt = pkt.get_payload()
-	# self.detl.eip4.set_pkt(pkt[IP]) 
 
+    def set_vxlan_dp(self, pkt):
+        self.outer_done = 0
+        self.detl.el.bvxlan.set_checked(True)
+        self.detl.el.bvlan.set_checked(False)
+        while pkt:
+            if pkt.__class__.__name__ == 'Ether':
+                self.detl.ee.set_elm(pkt)
+            elif pkt.__class__.__name__ == 'IP' and self.outer_done == 0:
+                self.detl.eip4.set_pkt(pkt)
+            elif pkt.__class__.__name__ == 'UDP' and self.outer_done == 0:
+                self.detl.evudp.set_elm(pkt)
+            elif pkt.__class__.__name__ == 'VXLAN':
+                self.outer_done = 1
+                self.detl.evxlan.set_vxlan_elm(pkt)
+            elif pkt.__class__.__name__ == 'IP':
+                self.detl.eip4i.set_elm(pkt)
+            elif pkt.__class__.__name__ == 'UDP':
+                self.detl.etcp.prot.set_text("udp")
+                self.detl.etcp.set_elm(pkt)
+            elif pkt.__class__.__name__ == 'TCP':
+                self.detl.etcp.prot.set_text("tcp")
+                self.detl.etcp.set_elm(pkt)
+            elif pkt.__class__.__name__ == 'Raw':
+                self.detl.epld.set_elm(pkt)
+            pkt = pkt.payload
+
+    def set_vlan_dp(self, pkt):
+        self.detl.el.bvlan.set_checked(True)
+        self.detl.el.bvxlan.set_checked(False)
+        while pkt:
+            if pkt.__class__.__name__ == 'Ether':
+                self.detl.ee.set_elm(pkt)
+            elif pkt.__class__.__name__ == 'Dot1Q':
+                self.detl.evxlan.set_vlan_elm(pkt)
+            elif pkt.__class__.__name__ == 'IP':
+                self.detl.eip4i.set_elm(pkt)
+            elif pkt.__class__.__name__ == 'UDP':
+                self.detl.etcp.prot.set_text("udp")
+                self.detl.etcp.set_elm(pkt)
+            elif pkt.__class__.__name__ == 'TCP':
+                self.detl.etcp.prot.set_text("tcp")
+                self.detl.etcp.set_elm(pkt)
+            elif pkt.__class__.__name__ == 'Raw':
+                self.detl.epld.set_elm(pkt)
+            pkt = pkt.payload
+
+    def set_normal_dp(self, pkt):
+        self.detl.el.bvlan.set_checked(False)
+        self.detl.el.bvxlan.set_checked(False)
+        while pkt:
+            if pkt.__class__.__name__ == "Ether":
+                self.detl.ee.set_elm(pkt)
+            elif pkt.__class__.__name__ == "IP":
+                self.detl.eip4i.set_elm(pkt)
+            elif pkt.__class__.__name__ == "UDP":
+                self.detl.etcp.prot.set_text("udp")
+                self.detl.etcp.set_elm(pkt)
+            elif pkt.__class__.__name__ == "TCP":
+                self.detl.etcp.prot.set_text("tcp")
+                self.detl.etcp.set_elm(pkt)
+            elif pkt.__class__.__name__ == "Raw":
+                self.detl.epld.set_elm(pkt)
+            pkt = pkt.payload
+
+
+    def set_packet(self, pkt):
+        self.pkt=pkt
+        tunnel='none'
+        while pkt:
+            if pkt.__class__.__name__ == "VXLAN":
+                self.tunnel='vxlan'
+            elif pkt.__class__.__name__ == "Dot1Q":
+                self.tunnel='vlan'
+            pkt = pkt.payload
+        if tunnel=='vxlan':
+            self.set_vxlan_dp(self.pkt)
+        elif tunnel=='vlan':
+            self.set_vlan_dp(self.pkt)
+        else:
+            self.set_normal_dp(self.pkt)
+       
+#    def set_packet(self, pkt):
+#        self.pkt = pkt
+#        for cls,layer in self.outer_map:
+#        	layer.set_pkt(None)
+#        for cls,layer in self.inner_map:
+#        	layer.set_pkt(None)
+#        outer = 1
+#        while pkt:
+#        	if outer:
+#        		layer = self.outer_map[type(pkt)]
+#        		layer.set_pkt(pkt)
+#        	else:
+#        		layer = self.outer_map[type(pkt)]
+#        		layer.set_pkt(pkt)
+#        	if type(pkt) == VXLAN:
+#        		outer = 0
+#        	pkt = pkt.get_payload()
+#	# self.detl.eip4.set_pkt(pkt[IP]) 
+#
 #q=flx.App(QuickEditPanel);q.serve('');flx.start()
 
