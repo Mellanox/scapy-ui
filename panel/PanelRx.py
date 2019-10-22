@@ -93,13 +93,13 @@ class PanelRx(flx.PyWidget):
 
     def init(self):
         with flx.VBox(css_class="debug"):
-            flx.Label(text='Sniffing')
+            self.root.set_status('Sniffing')
             with flx.HBox():
-                self.iface=flx.ComboBox(options=relay.ifname)
-                self.start=flx.Button(text="start")
-                self.stop=flx.Button(text="stop")
-                flx.Label(text="", flex=1)
-            self.view = PanelRxView()
+                self.iface=flx.ComboBox(options=relay.ifname, flex=2)
+                self.start=flx.Button(text="start",flex=1)
+                self.stop=flx.Button(text="stop",flex=1)
+                flx.Label(text="", flex=6)
+            self.view = PanelRxView(flex=1)
 
     @event.reaction
     def update_iface(self):
@@ -122,7 +122,10 @@ class PanelRx(flx.PyWidget):
             return relay.disconnect('system_info:' + self.id)
         for ev in events:
             self.view.update_info(dict(packets=ev.packets))
-
+            
+    def load_pkts(self, pkts):
+        for pkt in pkts:
+            print(pkt.summary())
 
 class PanelRxView(flx.PyWidget):
 
