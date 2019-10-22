@@ -39,7 +39,7 @@ class ScapyUI(flx.PyWidget):
 		self.pnl_rx.set_parent(None)
 
 	def show_panel(self, pnl):
-		pnl.set_parent(self._jswidget)  # Attach
+		pnl.set_parent(self._jswidget)	# Attach
 		print("switch to panel: {}".format(pnl))
 		if self.pnl_active != None:
 			self.pnl_active.set_parent(None)  # Detach
@@ -56,7 +56,8 @@ class ScapyUI(flx.PyWidget):
 		self.set_status("{}: {}".format(name, repr(pkt)))
 
 	def save_config(self, name):
-		pkt = Ether()/IP(src="1.2.3.4")/UDP(sport=123)/"abc"
+		pkt = self.pnl_tx.get_packet()
+		self.pnl_tx.set_raw()
 		self.pnl_config.save_config(name, pkt)
 
 	def del_config(self, name):

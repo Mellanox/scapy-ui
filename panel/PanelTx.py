@@ -90,9 +90,15 @@ class EEth(flx.PyWidget):
         self.e_dst = flx.LineEdit(placeholder_text='00:11:22:33:44:56', flex=10)
         self.bt_dtl = flx.Button(text='...', flex=1)
 
+    def get_elm(self):
+        return Ether(src=self.e_src.text, dst=self.e_dst.text)
+
+    def get_dp_elm(self):
+        return "Ether(src=\"" + self.e_src.text + "\"," + "dst=\"" + self.e_dst.text + "\")"
+
 class EIP4(flx.PyWidget):
     def init(self):
-      LayerIP()
+      self.lip = LayerIP()
 ###
 #      with flx.HFix():
 #        self.line = flx.Label(text='ip4:',flex=2)
@@ -102,6 +108,12 @@ class EIP4(flx.PyWidget):
 #        self.bt_dtl = flx.Button(text='...', flex=1)
 ###
 
+    def get_elm(self):
+        return IP(src=self.lip.src, dst=self.lip.dst)
+
+    def get_dp_elm(self):
+        return "IP(src=\"" + self.lip.src + "\", dst=\"" + self.lip.dst + "\")"
+
 class EUDP(flx.PyWidget):
     def init(self):
       with flx.HFix():
@@ -110,6 +122,12 @@ class EUDP(flx.PyWidget):
         self.ar = flx.Label(text='->', flex=1)
         self.e_dst = flx.LineEdit(placeholder_text='250', flex=10)
         self.bt_dtl = flx.Button(text='...',flex=1)
+
+    def get_elm(self):
+        return UDP(sport=self.e_src.text, dport=self.e_dst.text)
+
+    def get_dp_elm(self):
+        return "UDP(sport=\"" + self.e_src.text + "\", dport=\"" + self.e_dst.text + "\")"
 
 class EVXLAN(flx.PyWidget):
     def init(self):
@@ -122,6 +140,18 @@ class EVXLAN(flx.PyWidget):
         self.e_vlan = flx.LineEdit(placeholder_text='123', flex=8)
         self.bt_dtl = flx.Button(text='...', flex=1)
 
+    def get_vxlan_elm(self):
+        return VXLAN(vni=self.e_vni.text)
+
+    def get_vlan_elm(self):
+        return Dot1Q(vlan=self.e_vlan.text)
+
+    def get_dp_vxlan_elm(self):
+        return "VXLAN(vni=\"" + self.e_vni.text + "\")"
+
+    def get_dp_vlan_elm(self):
+        return "Dot1Q(vlan=\""+ self.e_vlan.text + "\")"
+
 class EIP4I(flx.PyWidget):
     def init(self):
       with flx.HFix():
@@ -130,6 +160,12 @@ class EIP4I(flx.PyWidget):
         self.ar = flx.Label(text='->', flex=1)
         self.e_dst = flx.LineEdit(placeholder_text='192.168.1.2', flex=10)
         self.bt_dtl = flx.Button(text='...', flex=1)
+
+    def get_elm(self):
+        return IP(src=self.e_src.text, dst=self.e_dst.text)
+
+    def get_dp_elm(self):
+        return "IP(src=\"" + self.e_src.text + "\", dst=\"" + self.e_dst.text + "\")"
 
 class ETCP(flx.PyWidget):
     def init(self):
@@ -141,12 +177,30 @@ class ETCP(flx.PyWidget):
         self.e_dst = flx.LineEdit(placeholder_text='250',flex=10)
         self.bt_dtl = flx.Button(text='...',flex=1)
 
+    def get_elm(self):
+        if (self.prot.text == 'tcp'):
+            return TCP(sport=self.e_src.text, dport=self.e_dst.text)
+        else:
+            return UDP(sport=int(self.e_src.text), dport=int(self.e_dst.text))
+
+    def get_dp_elm(self):
+        if (self.prot.text == 'tcp'):
+            return "TCP(sport=\"" + self.e_src.text + "\", dport=\"" + self.e_dst.text + "\")"
+        else:
+            return "UDP(sport=\"" + self.e_src.text + "\", dport=\"" + self.e_dst.text + "\")"
+
 class EPLD(flx.PyWidget):
     def init(self):
       with flx.HFix():
        self.line = flx.Label(text='payload:', flex=2)
        self.payload = flx.LineEdit(placeholder_text='ABCD',flex=21)
        self.bt_dtl = flx.Button(text='...',flex=1)
+
+    def get_elm(self):
+        return Raw(load=self.payload.text)
+
+    def get_dp_elm(self):
+        return "Raw(load=\"" + self.payload.text +"\")"
 
 class EDP(flx.PyWidget):
     CSS = """
@@ -161,7 +215,10 @@ class EDP(flx.PyWidget):
     """
     def init(self):
       with flx.HFix():
-        self.lb = ui.Label(wrap=1,text='Ether(src="00:11:22:33:44::55", dst="00:11:22:33:44:66")/IP(src=')
+        self.lb = ui.Label(wrap=1,text='Ether(src="00:11:22:33:44::55", dst="00:11:22:33:44:66")/IP(src=', css_class="flx-EDP")
+
+    def set_dp(self, pkt):
+        self.lb.set_text(pkt)
 
 class ERAW(ui.PyWidget):
     def init(self):
@@ -210,6 +267,75 @@ class PanelTx(flx.PyWidget):
         with ui.VFix(flex=20):
             self.detl = EditDetail(flex=20)
             self.snd = ESend(flex=2)
- 
+
+    def get_eth_elm(self):
+        if self.detl.el.beth.checked:
+            return self.detl.ee.get_elm()
+
+    def get_ip_elm(self):
+        return self.detl.eip4.get_elm()
+
+    def get_vudp_elm(self):
+        return self.detl.evudp.get_elm()
+
+    def get_vxlan_elm(self):
+        return self.detl.evxlan.get_vxlan_elm()
+
+    def get_vlan_elm(self):
+        return self.detl.evxlan.get_vlan_elm()
+
+    def get_ipi_elm(self):
+        return self.detl.eip4i.get_elm()
+
+    def get_tcp_elm(self):
+        return self.detl.etcp.get_elm()
+
+    def get_pld_elm(self):
+        return self.detl.epld.get_elm()
+
+    def get_eth_dp_elm(self):
+        if self.detl.el.beth.checked:
+            return self.detl.ee.get_dp_elm()
+
+    def get_ip_dp_elm(self):
+        return self.detl.eip4.get_dp_elm()
+
+    def get_vudp_dp_elm(self):
+        return self.detl.evudp.get_dp_elm()
+
+    def get_vxlan_dp_elm(self):
+        return self.detl.evxlan.get_vxlan_dp_elm()
+
+    def get_vlan_dp_elm(self):
+        return self.detl.evxlan.get_vlan_dp_elm()
+
+    def get_ipi_dp_elm(self):
+        return self.detl.eip4i.get_dp_elm()
+
+    def get_tcp_dp_elm(self):
+        return self.detl.etcp.get_dp_elm()
+
+    def get_pld_dp_elm(self):
+        return self.detl.epld.get_dp_elm()
+
+    def get_packet(self):
+        if self.detl.el.bvxlan.checked:
+            return self.get_eth_elm()/self.get_ip_elm()/self.get_vudp_elm()/self.get_vxlan_elm()/self.get_ipi_elm()/self.get_tcp_elm()/self.get_pld_elm()
+        elif self.detl.el.bvlan.checked:
+            return self.get_eth_elm()/self.get_vlan_elm()/self.get_ipi_elm()/self.get_tcp_elm()/self.get_pld_elm()
+        else:
+            return self.get_eth_elm()/self.get_ipi_elm()/self.get_tcp_elm()/self.get_pld_elm()
+
+    def get_dp_packet(self):
+        if self.detl.el.bvxlan.checked:
+            return self.get_eth_dp_elm()+'/'+self.get_ip_dp_elm()+'/'+self.get_vudp_dp_elm()+'/'+self.get_vxlan_dp_elm()+'/'+self.get_ipi_dp_elm()+'/'+self.get_tcp_dp_elm()+'/'+self.get_pld_dp_elm()
+        elif self.detl.el.bvlan.checked:
+            return self.get_eth_dp_elm()+'/'+self.get_vlan_dp_elm()+'/'+self.get_ipi_dp_elm()+'/'+self.get_tcp_dp_elm()+'/'+self.get_pld_dp_elm()
+        else:
+            return self.get_eth_dp_elm()+'/'+self.get_ipi_dp_elm()+'/'+self.get_tcp_dp_elm()+'/'+self.get_pld_dp_elm()
+
+    def set_raw(self):
+       self.detl.eraw.dp.set_dp(self.get_dp_packet()) 
+
 #q=flx.App(QuickEditPanel);q.serve('');flx.start()
 
