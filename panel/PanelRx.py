@@ -60,6 +60,7 @@ class Relay(flx.Component):
         self.refresh()
 
     def sniff_start(self, ifname):
+        p_list.clear()
         self.sniffer = AsyncSniffer(iface=ifname, prn=lambda x:p_list.append(x))
         self.sniffer.start()
 
@@ -96,8 +97,7 @@ class PanelRx(flx.PyWidget):
             self.root.set_status('Sniffing')
             with flx.HBox():
                 self.iface=flx.ComboBox(options=relay.ifname, flex=2)
-                self.start=flx.Button(text="start",flex=1)
-                self.stop=flx.Button(text="stop",flex=1)
+                self.start_stop=flx.Button(text="start", flex=1)
                 flx.Label(text="", flex=6)
             self.view = PanelRxView(flex=1)
 
@@ -107,14 +107,15 @@ class PanelRx(flx.PyWidget):
             self.ifname = self.iface.text
             print(self.ifname)
 
-    @event.reaction('start.pointer_click')
-    def _start_clicked(self, *events):
-        self.view.clear_info()
-        relay.sniff_start(self.ifname)
-
-    @event.reaction('stop.pointer_click')
-    def _stop_clicked(self, *events):
-        relay.sniff_stop()
+    @event.reaction('start_stop.pointer_click')
+    def _start_stop_clicked(self, *events):
+        if self.start_stop.text == "start":
+            self.view.clear_info()
+            relay.sniff_start(self.ifname)
+            self.start_stop.set_text('stop')
+        else:
+            relay.sniff_stop()
+            self.start_stop.set_text('start')
 
     @relay.reaction('system_info')  # note that we connect to relay
     def _push_info(self, *events):
@@ -122,7 +123,7 @@ class PanelRx(flx.PyWidget):
             return relay.disconnect('system_info:' + self.id)
         for ev in events:
             self.view.update_info(dict(packets=ev.packets))
-            
+
     def load_pkts(self, pkts):
         for pkt in pkts:
             print(pkt.summary())
@@ -135,7 +136,7 @@ class PanelRxView(flx.PyWidget):
 
     @flx.action
     def update_info(self, info):
-        if info['packets'] != None:
+        if info['packets'] :
             self.summary.add_summary(info['packets'])
 
     @flx.action
