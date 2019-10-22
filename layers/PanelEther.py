@@ -2,6 +2,7 @@ from scapy.all import *
 from flexx import flx
 from layers.LayerBase import *
 
+
 class LayerEther(LayerBase):
 	src = flx.StringProp(settable=True)
 	dst = flx.StringProp(settable=True)
@@ -32,13 +33,11 @@ class LayerEther(LayerBase):
 			self.set_src(self.pkt.fields.get('src',""))
 			self.set_dst(self.pkt.fields.get('dst',""))
 	
+	@flx.action
 	def pkt_update(self):
-		if len(self.src):
-			self.pkt.src = self.src
-		if len(self.dst):
-			self.pkt.dst = self.dst
-		if len(self.type):
-			self.pkt.type = int(self.type)
+		self.set_pkt_str("src")
+		self.set_pkt_str("dst")
+		self.set_pkt_int("type")
 		super().pkt_update()
 
 class PanelEther(PanelLayer):

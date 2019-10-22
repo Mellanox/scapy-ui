@@ -35,15 +35,12 @@ class LayerTCP(LayerBase):
 			self.set_len(str(self.pkt.fields.get('len',"")))
 			self.set_cksum(str(self.pkt.fields.get('chsum',"")))
 	
+	@flx.action
 	def pkt_update(self):
-		if len(self.src):
-			self.pkt.sport = int(self.src)
-		if len(self.dst):
-			self.pkt.dport = int(self.dst)
-		if len(self.len):
-			self.pkt.len = int(self.type)
-		if len(self.cksum):
-			self.pkt.chksum = int(self.cksum)
+		self.set_pkt_int('sport', 'src')
+		self.set_pkt_int('dport', 'dst')
+		self.set_pkt_int('len')
+		self.set_pkt_int('chksum', 'cksum')
 		super().pkt_update()
 
 class PanelTCP(PanelLayer):

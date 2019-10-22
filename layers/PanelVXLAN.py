@@ -33,11 +33,10 @@ class LayerVXLAN(LayerBase):
 			self.set_vni(str(self.pkt.fields.get('vni',"")))
 			self.set_flags(str(self.pkt.fields.get('flags',"")))
 	
+	@flx.action
 	def pkt_update(self):
-		if len(self.vni):
-			self.pkt.vni = int(self.vni)
-		if len(self.flags):
-			self.pkt.flags = int(self.flags)
+		self.set_pkt_int("vni")
+		self.set_pkt_int("flags")
 		super().pkt_update()
 
 class PanelVXLAN(PanelLayer):

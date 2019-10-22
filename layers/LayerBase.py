@@ -17,12 +17,30 @@ class LayerBase(flx.PyWidget):
 	def pkt_load(self, pkt):
 		self.pkt = pkt
 		if pkt:
-#			self.btn_detail.set_disabled(0)
 			self.set_parent(self.root.pnl_tx.detl._root)
 		else:
 			self.set_parent(None)
-#			self.btn_detail.set_disabled(1)
 	
+	def set_pkt_int(self, fld, val = None):
+		if val == None:
+			val = fld
+		cmd = """if len(self.{1}):
+	self.pkt.{0} = int(self.{1})
+else:
+	self.pkt.fields.pop('{0}', None)"""
+		cmd = cmd.format(fld, val)
+		exec(cmd)
+
+	def set_pkt_str(self, fld, val = None):
+		if val == None:
+			val = fld
+		cmd = """if len(self.{1}):
+	self.pkt.{0} = self.{1}
+else:
+	self.pkt.fields.pop('{0}', None)"""
+		cmd = cmd.format(fld, val)
+		exec(cmd)
+		
 
 
 class PanelLayer(flx.PyWidget):

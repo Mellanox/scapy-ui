@@ -36,14 +36,12 @@ class LayerIP(LayerBase):
 		else:
 			self.txt_src.set_disabled(1)
 			self.txt_dst.set_disabled(1)
-	
+
+	@flx.action
 	def pkt_update(self):
-		if len(self.src):
-			self.pkt.src = self.src
-		if len(self.dst):
-			self.pkt.dst = self.dst
-		if len(self.ttl):
-			self.pkt.ttl = int(self.ttl)
+		self.set_pkt_str("src")
+		self.set_pkt_str("dst")
+		self.set_pkt_int("ttl")
 		super().pkt_update()
 
 class PanelIP(PanelLayer):

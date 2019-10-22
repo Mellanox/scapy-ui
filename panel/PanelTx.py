@@ -119,8 +119,8 @@ class PanelTx(flx.PyWidget):
         self.outer_map = {Ether:self.detl.ee, IP:self.detl.eip4, UDP:self.detl.eudp, TCP:self.detl.etcp, VXLAN:self.detl.evxlan, Raw:self.detl.raw}
         self.inner_map = {Ether:self.detl.eei, IP:self.detl.eip4i, UDP:self.detl.eudpi, TCP:self.detl.etcpi, Raw:self.detl.raw}
         self.all_list = []
-        self.all_list.extend(self.outer_map.values())
-        self.all_list.extend(self.inner_map.values())
+        self.all_list += self.outer_map.values()
+        self.all_list += self.inner_map.values()
 
     def set_packet(self, pkt):
         print(type(pkt))
@@ -133,7 +133,7 @@ class PanelTx(flx.PyWidget):
             if outer:
                 layer = self.outer_map.get(type(pkt), None)
             else:
-                layer = self.outer_map.get(type(pkt), None)
+                layer = self.inner_map.get(type(pkt), None)
             if layer:
                 layer.pkt_load(pkt)
             else: 
