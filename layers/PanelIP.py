@@ -17,8 +17,8 @@ class LayerIP(LayerBase):
 		
 	@flx.reaction('btn_detail.pointer_click')
 	def on_detail(self, *events):
-		with self.root:
-		    pnl = PanelIP(self)
+		with self.root.pnl_root:
+		    pnl = PanelIP(self, flex=1)
 		self.root.show_panel(pnl)
 	
 	@flx.reaction('txt_src.text', 'txt_dst.text')

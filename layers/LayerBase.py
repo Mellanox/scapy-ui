@@ -19,19 +19,15 @@ class LayerBase(flx.PyWidget):
 class PanelLayer(flx.PyWidget):
 	def init(self, parent):
 		self._parent = parent
-		with flx.VBox():
-			flx.Label(text = parent.pkt.__class__.__name__, css_class="title", flex=1)
-			self._form = flx.FormLayout(flex=10)
-			flx.Label(flex=1)
-			self.lbl_scapy = flx.MultiLineEdit(text=lambda: self._parent.scapy, flex=50)
-			flx.Label(flex=1)
+		with flx.VBox(flex=1, css_class="debug"):
+			flx.Label(text = parent.pkt.__class__.__name__, css_class="title")
+			with flx.VBox():
+				self._form = flx.FormLayout()
+			flx.Label()
+			self.lbl_scapy = flx.MultiLineEdit(text=lambda: self._parent.scapy, flex=5)
+			flx.Label()
 			self.lbl_hex = flx.Label(wrap=1, text=lambda: self._parent.hex, flex=5)
-			flx.Label(flex=1)
-			self.btn_save = flx.Button(title="", text='Apply', flex=1)
-
-	@flx.reaction('btn_save.pointer_click')
-	def on_save(self, *events):
-		self.root.show_tx()
+			flx.Label()
 
 	def on_update(self, *events):
 		self._parent.pkt_update()
