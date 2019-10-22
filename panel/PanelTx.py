@@ -1,4 +1,5 @@
 from flexx import flx, ui
+import psutil
 from enum import IntEnum
 from scapy.all import *
 from layers.PanelIP import *
@@ -109,8 +110,8 @@ class EIP4(flx.PyWidget):
 ###
 
     def get_elm(self):
-    	self.lip.pkt_update()
-    	return self.lip.pkt
+        self.lip.pkt_update()
+        return self.lip.pkt
         # return IP(src=self.lip.src, dst=self.lip.dst)
 
     def get_dp_elm(self):
@@ -252,8 +253,9 @@ class ESend(flx.PyWidget):
     def init(self):
         with ui.VBox():
             with ui.HFix():
+                self.ifnames = list(psutil.net_if_addrs().keys())
                 self.lp = ui.Label(text="Port:", flex=2)
-                self.combo = ui.ComboBox(editable=False, options=('eth1', 'eth2'),selected_key='eth1', flex=2)
+                self.combo = ui.ComboBox(editable=False, options=self.ifnames, selected_key=self.ifnames[0], flex=2)
                 self.lept1 = ui.Label(text=" ", flex=3)
                 self.lc = ui.Label(text='Count', flex=2)
                 self.lcv = ui.LineEdit(placeholder_text='1', flex=2)
@@ -263,12 +265,18 @@ class ESend(flx.PyWidget):
                 self.lept3 = ui.Label(text=" ", flex=3)
                 self.snd_btn = ui.Button(text='Send', flex=2)
 
+    @flx.reaction
+    def update_iface(self):
+        if self.combo.selected_index is not None:
+            self.ifname = self.combo.text
+            print(self.ifname)
+
     @flx.reaction('snd_btn.pointer_click')
     def _send_packet(self, *events):
         packet = self.root.pnl_tx.get_packet()
         packet.show()
         print("Will send a packet")
-        sendp(packets, iface='eth2', count=1)
+        sendp(packets, iface=self.ifname, count=1)
 
 class PanelTx(flx.PyWidget):
     def init(self):
@@ -277,6 +285,7 @@ class PanelTx(flx.PyWidget):
             self.snd = ESend(flex=2)
         self.outer_map = {IP:self.detl.eip4, Ether:self.detl.ee, UDP:self.detl.evudp, VXLAN:self.detl.evxlan, TCP:self.detl.etcp}
         self.inner_map = {IP:self.detl.eip4i}
+
 
     def get_eth_elm(self):
         if self.detl.el.beth.checked:
