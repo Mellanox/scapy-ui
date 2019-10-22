@@ -3,8 +3,8 @@ from scapy.all import *
 
 class PanelBrowser(flx.PyWidget):
 	def init(self):
-		with flx.VBox():
-			self.browser = flx.FileBrowserWidget()
+		with flx.VBox(flex=1):
+			self.browser = flx.FileBrowserWidget(flex=1)
 	
 	@flx.reaction('browser.selected')
 	def on_select(self, *events):
