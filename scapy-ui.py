@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
 from scapy.all import *
-from flexx import flx
+from flexx import flx, app
 
 from panel.PanelConfig import *
 from panel.PanelSource import *
@@ -89,18 +89,19 @@ class ScapyUI(flx.PyWidget):
 
 	def set_status(self, status):
 		self.lbl_status.set_text(status)
-		
+
 	def on_file(self, file):
 		print("in callback:")
 		self.set_status("Got file: {}".format(file))
 		pkts = rdpcap(file)
 		self.show_rx()
 		self.pnl_rx.load_pkts(pkts)
-		
+
 	def load_pcap(self):
 		self.pnl_browser.set_callback(self)
 		self.show_panel(self.pnl_browser)
 
-m = flx.launch(ScapyUI)
-flx.run()
-
+#m = flx.launch(ScapyUI)
+#flx.run()
+app.serve(ScapyUI)
+app.start()
