@@ -11,7 +11,7 @@ import psutil
 p_list = []
 ifname_list = []
 
-class ListLabel(flx.PyWidget):
+class ListLabel(flx.Widget):
     idx = 0
     def init(self, text, idx):
         self.label = flx.Label(text = text, flex = 1, css_class="item")
@@ -19,8 +19,11 @@ class ListLabel(flx.PyWidget):
 
     @flx.reaction('label.pointer_click')
     def on_click(self, *events):
-        relay.pkt_detail(self.idx)
-        relay.pkt_hexdump(self.idx)
+        self.update_detail(self.idx)
+
+    @flx.emitter
+    def update_detail(self, idx):
+        return dict(idx=idx)
 
     def dispose(self):
         self.label.dispose()
@@ -75,14 +78,16 @@ class Relay(flx.Component):
         else:
             self.hexdump_txt = ''
 
-    @flx.emitter
-    def system_info(self):
-        return dict(packets=self.print_packet(),
-                    hexdump_txt=self.hexdump_txt,
-                    detail_txt=self.detail_txt)
+    def packet_info(self):
+        self.curr_idx = len(p_list)
+        for i in range(self.prev_idx, self.curr_idx):
+            self.emit('packet_info', dict(pkt_summary=p_list[i].summary(),
+                                          pkt_detail=p_list[i].show(dump=True),
+                                          pkt_hex=hexdump(p_list[i], dump=True)))
+        self.prev_idx = self.curr_idx
 
     def refresh(self):
-        self.system_info()
+        self.packet_info()
         asyncio.get_event_loop().call_later(0.5, self.refresh)
 
 
@@ -115,44 +120,53 @@ class PanelRx(flx.PyWidget):
             relay.sniff_stop()
             self.start_stop.set_text('start')
 
-    @relay.reaction('system_info')  # note that we connect to relay
-    def _push_info(self, *events):
+    @relay.reaction('!packet_info')
+    def _push_packet(self, *events):
         if not self.session.status:
-            return relay.disconnect('system_info:' + self.id)
+            return relay.disconnect('packet_info:' + self.id)
         for ev in events:
-            self.view.update_info(dict(packets=ev.packets,
-                                       hexdump_txt=ev.hexdump_txt,
-                                       detail_txt=ev.detail_txt))
+            self.view.add_pkt(dict(pkt_summary=ev.pkt_summary,
+                                   pkt_detail=ev.pkt_detail,
+                                   pkt_hex=ev.pkt_hex))
 
     def load_pkts(self, pkts):
-        p_list[:] = pkts
-        msg = relay.print_packet()
-        self.view.add_labels(msg)
+        self.view.clear_info()
+        for p in pkts:
+            self.view.add_pkt(dict(pkt_summary=p.summary(),
+                                   pkt_hex=hexdump(p, dump=True),
+                                   pkt_detail=p.show(dump=True)))
 
     def on_apply(self):
         relay.sniff_stop()
 
-class PanelRxView(flx.PyWidget):
+class PanelRxView(flx.Widget):
     CSS = """
-        .detail {boarder: solid green 3px; background:white;}
+        .detail {boarder: solid green 3px; background:white; font-size:small; word-wrap:break-word}
     """
 
-    labels = []
-    label_idx = 0
+    labels = flx.ListProp(settable=True)
+    label_idx = flx.IntProp(settable=True)
+    packets = flx.ListProp(settable=True)
 
     def init(self):
         with flx.HSplit():
             with flx.VBox(flex=1):
                 self.summary = flx.GroupWidget(title="Received Packets", flex=1, css_class="list")
-            with flx.VBox(flex=1):
+            with flx.VSplit(flex=1):
                 with flx.GroupWidget(css_class="list", flex=6, title="Detail"):
-                    with flx.VBox(flex=1):
-                        self.detail = flx.MultiLineEdit(flex=1)
+                    self.detail = flx.Label(flex=1, css_class="detail")
+                    self.detail.set_wrap(2)
                 with flx.GroupWidget(css_class="list", flex=4, title="hexdump"):
-                    self.hexdump = flx.Label(flex=1)
-                    self.hexdump.set_wrap(2)
-                    self.hexdump.set_css_class("detail")
+                    self.hexdump = flx.Label(flex=1, css_class="detail")
+                    self.hexdump.set_wrap(1)
 
+    @flx.action
+    def add_pkt(self, info):
+        self.packets.append(dict(summary=info['pkt_summary'], detail=info['pkt_detail'],
+                            hex=info['pkt_hex']))
+        self.add_one_label(info['pkt_summary'])
+
+    @flx.action
     def update_info(self, info):
         if info['packets']:
             self.add_labels(info['packets'])
@@ -160,34 +174,49 @@ class PanelRxView(flx.PyWidget):
             line = '<pre><code>' + info['hexdump_txt'] + '</ code></ pre>'
             self.hexdump.set_html(line)
         if info['detail_txt']:
-            self.detail.set_text(info['detail_txt'])
+            line = '<pre><code>' + info['detail_txt'] + '</ code></ pre>'
+            self.detail.set_html(line)
 
+    @flx.action
     def add_labels(self, msg):
         with self.summary:
             for l in msg.splitlines():
                 self.add_one_label(l)
 
+    @flx.action
     def add_one_label(self, msg):
-        self.labels.append(ListLabel(msg, self.label_idx))
-        self.label_idx += 1
+        with self.summary:
+            l = ListLabel(msg, self.label_idx)
+        self._mutate_labels([l], 'insert', len(self.labels))
+        self._mutate_label_idx(self.label_idx + 1)
 
+    @flx.action
     def clear_labels(self):
         for l in self.labels:
             l.dispose()
         self.labels.clear()
-        self.label_idx = 0
+        self._mutate_label_idx(0)
         self.hexdump.set_text('')
         self.detail.set_text('')
 
+    @flx.action
     def clear_info(self):
-        #self.summary.clear_summary()
+        self.set_packets([])
         self.clear_labels()
 
+    @flx.reaction('summary.children*.update_detail')
+    def _update_detail(self, *events):
+        e = events[-1]
+        self.show_detail(self.packets[e.idx]['detail'])
+        self.show_hexdump(self.packets[e.idx]['hex'])
+
     def show_detail(self, msg):
-        self.detail.set_text(msg)
+        msg = '<pre><code>' + msg + '</code></pre>'
+        self.detail.set_html(msg)
 
     def show_hexdump(self, msg):
-        self.hexdump.set_text(msg)
+        msg = '<pre><code>' + msg + '</code></pre>'
+        self.hexdump.set_html(msg)
 
 
 if __name__ == '__main__':
