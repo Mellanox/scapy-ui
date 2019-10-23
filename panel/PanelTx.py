@@ -251,7 +251,7 @@ class EDP(flx.PyWidget):
     """
     def init(self):
       with flx.HFix():
-        self.lb = ui.Label(wrap=1,text='Ether(src="00:11:22:33:44::55", dst="00:11:22:33:44:66")/IP(src=', css_class="flx-EDP")
+        self.lb = ui.MultiLineEdit(text='Ether(src="00:11:22:33:44::55", dst="00:11:22:33:44:66")/IP(src=192.168.0.1")', css_class="flx-EDP")
 
     def set_dp(self, pkt):
         self.lb.set_text(pkt)
@@ -266,6 +266,10 @@ class ERAW(ui.PyWidget):
             self.hex = flx.Label(text='hex', flex=1)
             self.pcap = flx.Label(text='save pcap', flex=2)
         self.dp = EDP(flex=20)
+
+    @flx.reaction('hex.pointer_click')
+    def on_hex(self, *events):
+        self.root.pnl_tx.set_hex()
 
 class EditDetail(flx.PyWidget):
     def init(self):
@@ -387,6 +391,9 @@ class PanelTx(flx.PyWidget):
 
     def set_raw(self):
        self.detl.eraw.dp.set_dp(self.get_dp_packet())
+
+    def set_hex(self):
+       self.detl.eraw.dp.set_dp(hexdump(self.pkt, dump=True))
 
     def set_vxlan_dp(self, pkt):
         self.outer_done = 0
