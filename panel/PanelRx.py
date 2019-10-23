@@ -64,7 +64,7 @@ class Relay(flx.Component):
 
     def pkt_detail(self, idx):
         if p_list[idx]:
-            self.detail_txt = p_list[idx].__repr__()
+            self.detail_txt = p_list[idx].show(dump=True)
         else:
             self.detail_txt = ''
 
@@ -124,8 +124,9 @@ class PanelRx(flx.PyWidget):
                                        detail_txt=ev.detail_txt))
 
     def load_pkts(self, pkts):
-        for pkt in pkts:
-            print(pkt.summary())
+        p_list[:] = pkts
+        msg = relay.print_packet()
+        self.view.add_labels(msg)
 
 class PanelRxView(flx.PyWidget):
     CSS = """
@@ -140,18 +141,17 @@ class PanelRxView(flx.PyWidget):
             with flx.VBox(flex=1):
                 self.summary = flx.GroupWidget(title="Received Packets", flex=1, css_class="list")
             with flx.VBox(flex=1):
-                with flx.GroupWidget(css_class="list", flex=1, title="Detail"):
-                    self.detail = flx.Label(flex=1)
-                    self.detail.set_wrap(2)
-                with flx.GroupWidget(css_class="list", flex=1, title="hexdump"):
+                with flx.GroupWidget(css_class="list", flex=6, title="Detail"):
+                    with flx.VBox(flex=1):
+                        self.detail = flx.MultiLineEdit(flex=1)
+                with flx.GroupWidget(css_class="list", flex=4, title="hexdump"):
                     self.hexdump = flx.Label(flex=1)
                     self.hexdump.set_wrap(2)
                     self.hexdump.set_css_class("detail")
 
     def update_info(self, info):
         if info['packets']:
-            with self.summary:
-                self.add_labels(info['packets'])
+            self.add_labels(info['packets'])
         if info['hexdump_txt']:
             line = '<pre><code>' + info['hexdump_txt'] + '</ code></ pre>'
             self.hexdump.set_html(line)
@@ -159,8 +159,9 @@ class PanelRxView(flx.PyWidget):
             self.detail.set_text(info['detail_txt'])
 
     def add_labels(self, msg):
-        for l in msg.splitlines():
-              self.add_one_label(l)
+        with self.summary:
+            for l in msg.splitlines():
+                self.add_one_label(l)
 
     def add_one_label(self, msg):
         self.labels.append(ListLabel(msg, self.label_idx))
