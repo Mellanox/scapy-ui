@@ -103,7 +103,10 @@ class ScapyUI(flx.PyWidget):
 		self.pnl_browser.set_callback(self)
 		self.show_panel(self.pnl_browser)
 
-#m = flx.launch(ScapyUI)
-#flx.run()
-app.serve(ScapyUI)
-app.start()
+if __name__ == '__main__':
+	if sys.argv[-1] == "--app":
+		flx.launch(ScapyUI)
+		flx.run()
+	else:
+		app.serve(ScapyUI)
+		app.start()
