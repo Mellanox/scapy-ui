@@ -1,26 +1,72 @@
 from scapy.all import *
 from flexx import flx
 
+class FieldDesc():
+	def __init__(self, title, type=str):
+		self.title = title
+		self.type = type
+		
+class ScapyTextField(flx.PyWidget):
+	def init(self, parent, name, flex=1):
+		self._parent = parent
+		self.name = name
+		self.desc = parent.descs[name]
+		with parent._cont:
+			self.w = flx.LineEdit(flex=flex, title=self.desc.title)
+		self._parent.fields.append(self)
+	
+	def load_pkt(self, pkt):
+		self.w.set_text(pkt.fields.get('src',""))
+		
+	@flx.reaction('w.user_text')
+	def update_pkt(self, *events):
+		text = events[-1]['new_value'].strip()
+		if len(text):
+			if self.desc.type == int:
+				v = int(text)
+				exec("self._parent.pkt.{} = {}".format(self.name, v))
+			else:
+				exec("self._parent.pkt.{} = '{}'".format(self.name, text))
+		else:
+			self._parent.pkt.fields.pop(self.name, None)
+		self._parent.on_update()
+	
+
 class LayerBase(flx.PyWidget):
 	scapy = flx.StringProp(settable=True)
 	hex = flx.StringProp(settable=True)
-	def init(self):
+	
+	fields = []
+	def init(self, descs={}, cls_detail=None):
+		self.descs = descs
+		self.cls_detail = cls_detail
 		with flx.HFix():
-			self._cont = flx.HFix(flex=23)
-			self.btn_detail = flx.Button(text="...", flex=1)
-		
-	def pkt_update(self):
-		self.set_scapy(self.pkt.show(dump=True))
-		self.set_hex(hexdump(self.pkt, dump=True))
+			self.lbl_title = flx.Label(flex=2)
+			self._cont = flx.HFix(flex=21)
+			self.btn_detail = flx.Button(text="...", flex=1, disabled = not cls_detail)
+			
+	def on_update(self):
 		self.root.pnl_tx.on_packet_update()
 	
+	@flx.action
 	def pkt_load(self, pkt):
 		self.pkt = pkt
-		if pkt:
-			self.set_parent(self.root.pnl_tx.detl._root)
-		else:
+		if not pkt:
 			self.set_parent(None)
-	
+			return
+		self.set_parent(self.root.pnl_tx.detl._root)
+		self.lbl_title.set_text(pkt.__class__._name)
+		for w in self.fields:
+			w.load_pkt(pkt) 
+			
+	@flx.reaction('btn_detail.pointer_click')
+	def on_detail(self, *events):
+		with self.root.pnl_root:
+		    pnl = self.cls_detail(self, flex=1)
+		pnl.pkt_load(self.pkt)
+		self.root.show_panel(pnl)
+
+	# to be removed:	
 	def set_pkt_int(self, fld, val = None):
 		if val == None:
 			val = fld
@@ -44,19 +90,26 @@ else:
 
 
 class PanelLayer(flx.PyWidget):
-	def init(self, parent):
-		self._parent = parent
-		with flx.VBox(flex=1, css_class="debug"):
-			flx.Label(text = parent.pkt.__class__.__name__, css_class="title")
+	fields = []
+	def init(self, descs={}):
+		self.descs = descs
+		with flx.VBox(flex=1):
+			self.lbl_title = flx.Label(css_class="title")
 			with flx.VBox():
 				self._form = flx.FormLayout()
+			self._cont = self._form
 			flx.Label()
-			self.lbl_scapy = flx.MultiLineEdit(text=lambda: self._parent.scapy, flex=5)
+			self.lbl_scapy = flx.MultiLineEdit(flex=5)
 			flx.Label()
-			self.lbl_hex = flx.Label(wrap=1, text=lambda: self._parent.hex, flex=5)
-			flx.Label()
+			self.lbl_hex = flx.Label(wrap=1, flex=5)
 
-	def on_update(self, *events):
-		self._parent.pkt_update()
+	def pkt_load(self, pkt):
+		self.pkt = pkt
+		self.lbl_title.set_text(pkt.__class__._name)
+		for w in self.fields:
+			w.load_pkt(pkt) 
 		
+	def on_update(self):
+		self.lbl_scapy.setText(self.pkt.show(dump=True))
+		self.lbl_hex.setText(hexdump(self.pkt, dump=True))
 		
