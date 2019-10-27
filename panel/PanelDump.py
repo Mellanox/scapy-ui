@@ -15,15 +15,17 @@ class PanelDump(ui.PyWidget):
     }
     """
     def init(self):
+        self.pkt = None
         with ui.VBox():
             with ui.HBox():
-                self.lbl_repr = flx.Label(flex=1, css_class="title")
-                self.btn_pcap = flx.Button(text='save pcap')
+                self.lbl_repr = flx.LineEdit(flex=1, css_class="title", disabled=1)
+                self.btn_save = flx.Button(text='save pcap', disabled=lambda: self.pkt == None)
             with ui.HSplit(flex=1):
                 self.txt_show = ui.MultiLineEdit(css_class="pkt_dump", flex=1)
                 self.txt_hex = ui.MultiLineEdit(css_class="pkt_dump", flex=1)
     
     def show_pkt(self, pkt):
+        self.pkt = pkt
         if pkt:
             self.lbl_repr.set_text(repr(pkt))
             self.txt_show.set_text(pkt.show(dump=True))
@@ -33,3 +35,7 @@ class PanelDump(ui.PyWidget):
             self.txt_show.set_text("")
             self.txt_hex.set_text("")
 
+    @flx.reaction('btn_save.pointer_click')
+    def on_save(self, *events):
+        self.root.save_pcap(self.pkt)
+        

@@ -31,7 +31,7 @@ class ScapyUI(flx.PyWidget):
         with flx.VBox(flex=1):
             with flx.HFix():
                 self.lbl_status = flx.Label(text='...', flex=9, css_class="status")
-                self.btn_back = flx.Button(text="Back", flex=1, disabled=1, css_class="disabled")
+                self.btn_back = flx.Button(text="Back", flex=1, disabled = 1, css_class = "disabled")
             with flx.VBox(flex=1) as self.pnl_root:
                 with flx.HSplit(flex=1) as self.pnl_main:
                     self.pnl_config = PanelConfig(flex=2)
@@ -45,34 +45,37 @@ class ScapyUI(flx.PyWidget):
                 self.pnl_browser.set_parent(None)
         self.load_config("test", Ether())
                 
-    @flx.reaction('btn_back.pointer_click')
-    def on_back(self, *events):
-        self.show_tx()
-
-    def show_panel(self, pnl):
-        if pnl == self.pnl_main:
-            self.btn_back.set_disabled(1)
-            self.btn_back.set_css_class("disabled")
-        else:
-            self.btn_back.set_disabled(0)
-            self.btn_back.set_css_class("")
-                    
-        if self.pnl_active == pnl:
-            reutrn;
+    def _show_panel(self, pnl):
+        print("{} -> {}".format(self.pnl_active, pnl))
         pnl.set_parent(self.pnl_root) #_jswidget)  # Attach
-        print("switch to panel: {}".format(pnl))
         if self.pnl_active != None:
-            if self.pnl_active != self.pnl_main:
-                self.pnl_active.on_apply()
             self.pnl_active.set_parent(None)  # Detach
         self.pnl_active = pnl
+        if getattr(pnl, "_pnl_prev", None):
+            self.btn_back.set_disabled(0)
+            self.btn_back.set_css_class("")
+        else:
+            self.btn_back.set_disabled(1)
+            self.btn_back.set_css_class("disabled")
+            
         
+        
+    def activate_panel(self, pnl):
+        pnl._pnl_prev = self.pnl_active
+        self._show_panel(pnl)
 
-    def show_tx(self):
-        self.show_panel(self.pnl_main)
+    def close_panel(self):
+        pnl = self.pnl_active._pnl_prev
+        self._show_panel(pnl)
+        pnl._pnl_prev = None
+
+    @flx.reaction('btn_back.pointer_click')
+    def on_back(self, *events):
+        self.pnl_active.on_apply()
+        self.close_panel()
 
     def show_rx(self):
-        self.show_panel(self.pnl_rx)
+        self.activate_panel(self.pnl_rx)
 
     def load_config(self, name, pkt):
         self.pnl_source.txt_name.set_text(name)
@@ -91,15 +94,23 @@ class ScapyUI(flx.PyWidget):
     def set_status(self, status):
         self.lbl_status.set_text(status)
 
-    def on_file(self, file):
-        self.set_status("Got file: {}".format(file))
+    def _on_load_file(self, file, arg):
         pkts = rdpcap(file)
         self.show_rx()
         self.pnl_rx.load_pkts(pkts)
+        self.set_status("Loaded file: {}".format(file))
+
+    def _on_save_file(self, file, pkt):
+        pkts = wrpcap(file, pkt)
+        self.set_status("Saved to file: {}".format(file))
 
     def load_pcap(self):
-        self.pnl_browser.set_callback(self)
-        self.show_panel(self.pnl_browser)
+        self.pnl_browser.set_callback(self._on_load_file)
+        self.activate_panel(self.pnl_browser)
+
+    def save_pcap(self, pkt):
+        self.pnl_browser.set_callback(self._on_save_file, pkt)
+        self.activate_panel(self.pnl_browser)
 
 if __name__ == '__main__':
     if sys.argv[-1] == "--app":

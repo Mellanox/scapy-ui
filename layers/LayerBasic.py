@@ -44,4 +44,4 @@ class LayerBasic(flx.PyWidget):
             else:
                 pnl = self.cls_detail(self)
         pnl.pkt_load(self.pkt)
-        self.root.show_panel(pnl)
+        self.root.activate_panel(pnl)
