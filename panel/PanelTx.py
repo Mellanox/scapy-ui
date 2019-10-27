@@ -43,7 +43,7 @@ class PanelDump(ui.PyWidget):
     def init(self):
         with ui.VFix():
             with ui.HFix(flex=1):
-                self.btn_valid = flx.Label(text='valid/invalid', flex=2)
+                self.btn_valid = flx.Label(text='', flex=2)
                 flx.Label(flex=15)
                 self.btn_hex = flx.ToggleButton(text='hex', flex=1)
                 self.btn_pcap = flx.Button(text='save pcap', flex=2)
@@ -57,7 +57,9 @@ class PanelDump(ui.PyWidget):
     def show_pkt(self, pkt, hex):
         if hex == -1:
             hex = self.btn_hex.checked
-        if hex:
+        if pkt == None:
+            msg = ""
+        elif hex:
             msg = hexdump(pkt, dump=True)
         else:
             msg = pkt.show(dump=True)
