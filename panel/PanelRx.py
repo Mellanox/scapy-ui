@@ -141,7 +141,36 @@ class PanelRx(flx.PyWidget):
 
 class PanelRxView(flx.Widget):
     CSS = """
-        .detail {boarder: solid green 3px; background:white; font-size:small; word-wrap:break-word}
+        .detail {
+            boarder: solid green 3px;
+            font-size:small;
+            word-wrap:break-word;
+            overflow: auto;
+        }
+        .packet_list { overflow: auto; }
+        .flx-TreeWidget {
+            border: gray solid 1px;
+            font-size: small;
+        }
+        .flx-TreeItem {
+            border-top: white solid 1px;
+            text-overflow:ellipse;
+            white-space:nowrap;
+        }
+        .flx-TreeItem:hover {
+            background-color: #EEEEEE;
+        }
+        .flx-TreeItem.selected-true {
+            background: blue;
+            color: white;
+        }
+        .flx-TreeWidget .flx-TreeItem > .text.hastitle {
+            width: 95%;
+        }
+        .flx-TreeItem > .title {
+            background: white;
+            color: gray;
+        }
     """
 
     labels = flx.ListProp(settable=True)
@@ -151,7 +180,7 @@ class PanelRxView(flx.Widget):
     def init(self):
         with flx.HSplit():
             with flx.VBox(flex=1):
-                self.summary = flx.GroupWidget(title="Received Packets", flex=1, css_class="list")
+                self.summary = flx.TreeWidget(flex=1, max_selected=1)
             with flx.VSplit(flex=1):
                 with flx.GroupWidget(css_class="list", flex=6, title="Detail"):
                     self.detail = flx.Label(flex=1, css_class="detail")
@@ -186,7 +215,7 @@ class PanelRxView(flx.Widget):
     @flx.action
     def add_one_label(self, msg):
         with self.summary:
-            l = ListLabel(msg, self.label_idx)
+            l = flx.TreeItem(text=msg, title=str(self.label_idx), checked=None)
         self._mutate_labels([l], 'insert', len(self.labels))
         self._mutate_label_idx(self.label_idx + 1)
 
@@ -204,11 +233,12 @@ class PanelRxView(flx.Widget):
         self.set_packets([])
         self.clear_labels()
 
-    @flx.reaction('summary.children*.update_detail')
+    @flx.reaction('summary.children**.checked', 'summary.children**.selected')
     def _update_detail(self, *events):
         e = events[-1]
-        self.show_detail(self.packets[e.idx]['detail'])
-        self.show_hexdump(self.packets[e.idx]['hex'])
+        id = int(e.source.title)
+        self.show_detail(self.packets[id]['detail'])
+        self.show_hexdump(self.packets[id]['hex'])
 
     def show_detail(self, msg):
         msg = '<pre><code>' + msg + '</code></pre>'
