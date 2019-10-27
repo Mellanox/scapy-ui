@@ -8,6 +8,8 @@ from layers.PanelUDP import *
 from layers.PanelTCP import *
 from layers.PanelVXLAN import *
 from layers.PanelRaw import *
+from panel.PanelDump import *
+from panel.PanelSend import *
 
 layers = {Ether:LayerEther, IP:LayerIP, UDP:LayerUDP, TCP:LayerTCP, VXLAN:LayerVXLAN, Raw:LayerRaw}
 
@@ -29,42 +31,6 @@ class PanelLayers(flx.PyWidget):
                 LayerButton(layer, flex=1)
             flx.Label(flex=20)
 
-class PanelDump(ui.PyWidget):
-    CSS = """
-    .pkt_dump {
-        text-align: left;
-        min-width: 10px;
-        min-height: 10px;
-        padding: 5px;
-        border: 2px solid black;
-        border-radius: 5px;
-    }
-    """
-    def init(self):
-        with ui.VFix():
-            with ui.HFix(flex=1):
-                self.btn_valid = flx.Label(text='', flex=2)
-                flx.Label(flex=15)
-                self.btn_hex = flx.ToggleButton(text='hex', flex=1)
-                self.btn_pcap = flx.Button(text='save pcap', flex=2)
-            self.txt_dump = ui.MultiLineEdit(css_class="pkt_dump", flex=9)
-
-    @flx.reaction('btn_hex.user_checked')
-    def on_hex(self, *events):
-        checked = events[-1]['new_value']
-        self.root.pnl_tx.show_pkt(checked)
-    
-    def show_pkt(self, pkt, hex):
-        if hex == -1:
-            hex = self.btn_hex.checked
-        if pkt == None:
-            msg = ""
-        elif hex:
-            msg = hexdump(pkt, dump=True)
-        else:
-            msg = pkt.show(dump=True)
-        self.txt_dump.set_text(msg)
-
 class PanelTx(flx.PyWidget):
     def init(self):
         self.pkt = None
@@ -75,9 +41,10 @@ class PanelTx(flx.PyWidget):
                 self._cont = flx.VBox()
                 flx.Label(flex=1)
             self.pnl_dump = PanelDump(flex=11)
+            PanelSend()
 
-    def show_pkt(self, hex=-1):
-        self.pnl_dump.show_pkt(self.pkt, hex)
+    def show_pkt(self):
+        self.pnl_dump.show_pkt(self.pkt)
 
     def add_layer(self, pkt):
         cls = layers.get(type(pkt), None)

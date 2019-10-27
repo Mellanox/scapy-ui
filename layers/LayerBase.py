@@ -1,5 +1,6 @@
 from scapy.all import *
 from flexx import flx
+from panel.PanelDump import *
 
 class FieldDesc():
     placeholder=None
@@ -76,14 +77,12 @@ class PanelLayer(flx.PyWidget):
         self.set_flex(1)
         self._parent = parent
         self.descs = descs
-        with flx.VBox(flex=1):
+        with flx.VFix():
             self.lbl_title = flx.Label()
-            with flx.VBox():
+            with flx.VBox(flex=4):
                 self._cont = flx.FormLayout()
-            flx.Label()
-            self.lbl_scapy = flx.MultiLineEdit(flex=5)
-            flx.Label()
-            self.lbl_hex = flx.Label(wrap=1, flex=5)
+                flx.Label(flex=1)
+            self.pnl_dump = PanelDump(flex=6)
 
     def build_fields(self):
         for name in self.descs.keys():
@@ -92,15 +91,14 @@ class PanelLayer(flx.PyWidget):
 
     def pkt_load(self, pkt):
         self.pkt = pkt
-        self.lbl_title.set_text(pkt.__class__._name)
+        # self.lbl_title.set_text(pkt.__class__._name)
         for w in self.fields:
             w.load_pkt(pkt)
         self.on_update() 
         
     # field changed
     def on_update(self):
-        self.lbl_scapy.set_text(self.pkt.show(dump=True))
-        self.lbl_hex.set_text(hexdump(self.pkt, dump=True))
+        self.pnl_dump.show_pkt(self.pkt)
         
     # apply and back
     def on_apply(self):

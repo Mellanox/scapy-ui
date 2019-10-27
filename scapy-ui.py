@@ -7,7 +7,6 @@ from panel.PanelConfig import *
 from panel.PanelSource import *
 from panel.PanelRx import *
 from panel.PanelTx import *
-from panel.PanelSend import *
 from panel.PanelBrowser import *
 
 from layers.PanelIP import *
@@ -39,7 +38,6 @@ class ScapyUI(flx.PyWidget):
                     with flx.VBox(flex=8):
                         self.pnl_source = PanelSource() 
                         self.pnl_tx = PanelTx(flex=15)
-                        PanelSend()
                 self.pnl_active = self.pnl_main
                 self.pnl_rx = PanelRx(flex=1)
                 self.pnl_rx.set_parent(None)
@@ -79,7 +77,7 @@ class ScapyUI(flx.PyWidget):
     def load_config(self, name, pkt):
         self.pnl_source.txt_name.set_text(name)
         self.pnl_tx.set_pkt(pkt)
-        self.set_status("{}: {}".format(name, repr(pkt)))
+        self.set_status("")
 
     def save_config(self, name):
         pkt = self.pnl_tx.pkt
