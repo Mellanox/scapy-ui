@@ -65,44 +65,16 @@ class PanelDump(ui.PyWidget):
             msg = pkt.show(dump=True)
         self.txt_dump.set_text(msg)
 
-class ESend(flx.PyWidget):
-    def init(self):
-        with ui.VBox():
-            with ui.HFix():
-                self.ifnames = list(psutil.net_if_addrs().keys())
-                self.lp = ui.Label(text="Port:", flex=2)
-                self.combo = ui.ComboBox(editable=False, options=self.ifnames, selected_key=self.ifnames[0], flex=2)
-                self.lept1 = ui.Label(text=" ", flex=3)
-                self.lc = ui.Label(text='Count', flex=2)
-                self.lcv = ui.LineEdit(placeholder_text='1', flex=2)
-                self.lept2 = ui.Label(text=" ", flex=3)
-                self.ll = ui.Label(text='Interval/ms', flex=3)
-                self.llv = ui.LineEdit(placeholder_text='100', flex=2)
-                self.lept3 = ui.Label(text=" ", flex=3)
-                self.snd_btn = ui.Button(text='Send', flex=2)
-
-    @flx.reaction
-    def update_iface(self):
-        if self.combo.selected_index is not None:
-            self.ifname = self.combo.text
-            print(self.ifname)
-
-    @flx.reaction('snd_btn.pointer_click')
-    def _send_packet(self, *events):
-        packet = self.root.pnl_tx.pkt
-        sendp(packet, iface=self.ifname, count=1)
-
 class PanelTx(flx.PyWidget):
     def init(self):
         self.pkt = None
         self.layer_list = []
-        with ui.VFix(flex=20):
-            PanelLayers(flex=1)
+        with ui.VFix(flex=18):
+            PanelLayers()
             with flx.VBox(flex=7):
                 self._cont = flx.VBox()
                 flx.Label(flex=1)
             self.pnl_dump = PanelDump(flex=11)
-            self.snd = ESend(flex=2)
 
     def show_pkt(self, hex=-1):
         self.pnl_dump.show_pkt(self.pkt, hex)
