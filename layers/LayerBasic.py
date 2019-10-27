@@ -12,9 +12,10 @@ class LayerBasic(flx.PyWidget):
         self.cls_detail = cls_detail
         self.fields = []
         with flx.HFix():
-            self.lbl_title = flx.Label(flex=2)
-            self._cont = flx.HFix(flex=21)
-            self.btn_detail = flx.Button(text="...", flex=1, disabled = not cls_detail)
+            self.lbl_title = flx.Label(flex=4)
+            self._cont = flx.HFix(flex=42)
+            self.btn_detail = flx.Button(text="...", flex=2, disabled = not cls_detail)
+            self.btn_remove = flx.Button(text="x", flex=1)
             
     @flx.action
     def pkt_load(self, pkt):
@@ -45,3 +46,8 @@ class LayerBasic(flx.PyWidget):
                 pnl = self.cls_detail(self)
         pnl.pkt_load(self.pkt)
         self.root.activate_panel(pnl)
+
+    @flx.reaction('btn_remove.pointer_click')
+    def on_remove(self, *events):
+        self.root.pnl_tx.remove_layer(self.pkt)
+        

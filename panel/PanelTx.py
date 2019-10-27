@@ -36,7 +36,7 @@ class PanelTx(flx.PyWidget):
         self.pkt = None
         self.layer_list = []
         with ui.VFix(flex=18):
-            PanelLayers()
+            PanelLayers(css_class="title")
             with flx.VBox(flex=7):
                 self._cont = flx.VBox()
                 flx.Label(flex=1)
@@ -72,6 +72,17 @@ class PanelTx(flx.PyWidget):
             self.pkt = payload
         self.add_layer(payload)
         self.show_pkt()
+
+    def remove_layer(self, layer):
+        pkt = self.pkt
+        if pkt == layer:
+            pkt = None
+        else:
+            while pkt.payload != layer:
+                pkt = pkt.payload
+            pkt.remove_payload()
+            pkt.add_payload(layer.payload)
+        self.set_pkt(pkt)
           
 #q=flx.App(QuickEditPanel);q.serve('');flx.start()
 

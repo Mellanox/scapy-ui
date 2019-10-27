@@ -9,8 +9,6 @@ from panel.PanelRx import *
 from panel.PanelTx import *
 from panel.PanelBrowser import *
 
-from layers.PanelIP import *
-
 class ScapyUI(flx.PyWidget):
     CSS = """
         .center {align:center}
@@ -58,8 +56,6 @@ class ScapyUI(flx.PyWidget):
             self.btn_back.set_disabled(1)
             self.btn_back.set_css_class("disabled")
             
-        
-        
     def activate_panel(self, pnl):
         pnl._pnl_prev = self.pnl_active
         self._show_panel(pnl)
