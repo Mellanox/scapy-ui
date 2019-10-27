@@ -1,6 +1,6 @@
 from scapy.all import *
 from flexx import flx
-from layers.LayerBase import *
+from layers.LayerBasic import *
 
 udp_descs = {
     "sport":PortDesc("Source"),
@@ -9,7 +9,7 @@ udp_descs = {
     "chksum":FieldDesc("Checksum", int)
 }
 
-class LayerUDP(LayerBase):
+class LayerUDP(LayerBasic):
     def init(self):
         super().init(udp_descs)
         with self._cont:

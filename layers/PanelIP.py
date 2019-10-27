@@ -1,6 +1,6 @@
 from scapy.all import *
 from flexx import flx
-from layers.LayerBase import *
+from layers.LayerBasic import *
 
 class IpDesc(FieldDesc):
     def __init__(self, title):
@@ -21,7 +21,7 @@ ip_descs = {
     "chksum":FieldDesc("Checksum", int)
 }
 
-class LayerIP(LayerBase):
+class LayerIP(LayerBasic):
     def init(self):
         super().init(ip_descs)
         with self._cont:

@@ -1,6 +1,6 @@
 from scapy.all import *
 from flexx import flx
-from layers.LayerBase import *
+from layers.LayerBasic import *
 
 class MacDesc(FieldDesc):
     def __init__(self, title):
@@ -17,7 +17,7 @@ ether_descs = {
     "type":FieldDesc("Type", int)
 }
 
-class LayerEther(LayerBase):
+class LayerEther(LayerBasic):
     def init(self):
         super().init(ether_descs, PanelEther)
         with self._cont:
@@ -26,7 +26,7 @@ class LayerEther(LayerBase):
             ScapyTextField(self, "dst", 10)
 
 # Just a demo of how to customize detail panel
-class PanelEther(PanelLayer):
+class PanelEther(PanelLayerDetail):
     def init(self, parent):
         super().init(parent, ether_descs)
         with self._cont:

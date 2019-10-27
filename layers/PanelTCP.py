@@ -1,6 +1,6 @@
 from scapy.all import *
 from flexx import flx
-from layers.LayerBase import *
+from layers.LayerBasic import *
 
 tcp_descs = {
     "sport":PortDesc("Source"),
@@ -9,7 +9,7 @@ tcp_descs = {
     "chksum":FieldDesc("Checksum", int)
 }
 
-class LayerTCP(LayerBase):
+class LayerTCP(LayerBasic):
     def init(self):
         super().init(tcp_descs)
         with self._cont:
