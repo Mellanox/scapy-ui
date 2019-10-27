@@ -62,7 +62,7 @@ class PanelDump(ui.PyWidget):
         else:
             msg = pkt.show(dump=True)
         self.txt_dump.set_text(msg)
-        
+
 class ESend(flx.PyWidget):
     def init(self):
         with ui.VBox():

@@ -89,11 +89,9 @@ class ScapyUI(flx.PyWidget):
 		self.pnl_config.del_config(name)
 
 	def set_status(self, status):
-		print(status)
 		self.lbl_status.set_text(status)
 
 	def on_file(self, file):
-		print("in callback:")
 		self.set_status("Got file: {}".format(file))
 		pkts = rdpcap(file)
 		self.show_rx()

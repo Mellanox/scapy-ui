@@ -3,11 +3,11 @@ from flexx import flx
 from layers.LayerBase import *
 
 raw_descs = {
-	"load":FieldDesc("Raw", bytes, ("'abcd'","'a' * 10"))
+    "load":FieldDesc("Raw", bytes, ("'abcd'","'a' * 10"))
 }
 
 class LayerRaw(LayerBase):
-	def init(self):
-		super().init(raw_descs)
-		with self._cont:
-			ScapyTextField(self, "load", 21)
+    def init(self):
+        super().init(raw_descs)
+        with self._cont:
+            ScapyTextField(self, "load", 21)
