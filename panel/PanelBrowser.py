@@ -15,10 +15,15 @@ class PanelBrowser(flx.PyWidget):
     def on_select(self, *events):
         file = events[-1].filename
         self.txt_file.set_text(file.split("/")[-1])
-        
+        if not self._arg: # Open
+            self.on_file(file)
+
     @flx.reaction('btn_file.pointer_click')
-    def on_file(self, *events):
+    def on_btn(self, *events):
         file = self.file_browser.path + "/" + self.txt_file.text
+        self.on_file(file)
+    
+    def on_file(self, file):
         if not file.lower().endswith(".pcap"):
             self.root.set_status("Please select *.pcap file")
             return

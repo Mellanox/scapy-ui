@@ -6,7 +6,7 @@ import os
 class PanelSource(flx.PyWidget):
     def init(self):
         with flx.HFix():
-            flx.Label(text="Name: ", css_class="title", flex=2)
+            flx.Label(text="Name: ", flex=2)
             self.txt_name = flx.LineEdit(flex=16)
             self.btn_save = flx.Button(text='Apply', flex=2)
             self.btn_new = flx.Button(text='New', flex=2)

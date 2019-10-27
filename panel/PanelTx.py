@@ -25,11 +25,21 @@ class LayerButton(flx.PyWidget):
 
 
 class PanelLayers(flx.PyWidget): 
+    CSS = """
+    .flx-PanelLayers {
+        text-align: center;
+        padding: 5px;
+        border-radius: 5px;
+        font-family:Consolas, "Times New Roman", Times, serif;
+        font-size: 1em;
+    }
+    """
     def init(self):
-        with ui.HBox():
+        with ui.HBox(css_class="flx-PanelLayers"):
+            flx.Label(flex=4)
             for layer in layers.keys():
                 LayerButton(layer, flex=1)
-            flx.Label(flex=20)
+            flx.Label(flex=4)
 
 class PanelTx(flx.PyWidget):
     def init(self):
