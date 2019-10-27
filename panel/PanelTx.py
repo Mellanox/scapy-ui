@@ -54,8 +54,14 @@ class PanelDump(ui.PyWidget):
         checked = events[-1]['new_value']
         self.root.pnl_tx.show_pkt(checked)
     
-    def dump_text(self, msg):
-    	self.txt_dump.set_text(msg)
+    def show_pkt(self, pkt, hex):
+        if hex == -1:
+            hex = self.btn_hex.checked
+        if hex:
+            msg = hexdump(pkt, dump=True)
+        else:
+            msg = pkt.show(dump=True)
+        self.txt_dump.set_text(msg)
         
 class ESend(flx.PyWidget):
     def init(self):
@@ -91,16 +97,13 @@ class PanelTx(flx.PyWidget):
         with ui.VFix(flex=20):
             PanelLayers(flex=1)
             with flx.VBox(flex=7):
-            	self._cont = flx.VBox()
-            	flx.Label(flex=1)
+                self._cont = flx.VBox()
+                flx.Label(flex=1)
             self.pnl_dump = PanelDump(flex=11)
             self.snd = ESend(flex=2)
 
-    def show_pkt(self, hex=0):
-        if hex:
-            self.pnl_dump.dump_text(hexdump(self.pkt, dump=True))
-        else:
-            self.pnl_dump.dump_text(self.pkt.show(dump=True))
+    def show_pkt(self, hex=-1):
+        self.pnl_dump.show_pkt(self.pkt, hex)
 
     def add_layer(self, pkt):
         cls = layers.get(type(pkt), None)

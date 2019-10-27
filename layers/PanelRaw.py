@@ -3,7 +3,7 @@ from flexx import flx
 from layers.LayerBase import *
 
 raw_descs = {
-	"load":FieldDesc("Raw")
+	"load":FieldDesc("Raw", bytes, ("'abcd'","'a' * 10"))
 }
 
 class LayerRaw(LayerBase):

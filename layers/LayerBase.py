@@ -4,26 +4,16 @@ from flexx import flx
 class FieldDesc():
 	placeholder=None
 	autocomp=None
-	def __init__(self, title, type=str, placeholder=None, autocomp=None):
+	def __init__(self, title, type=str, autocomp=None, placeholder=None):
 		self.title = title
 		self.type = type
-		self.palceholder = placeholder
 		self.autocomp = autocomp
+		self.palceholder = placeholder
 
-class MacDesc(FieldDesc):
+class PortDesc(FieldDesc):
 	def __init__(self, title):
-		super().__init__(title)
-		self.autocomp = ("00:11:22:33:44:55",
-			"66:77:88:99:aa:bb",
-			"aa:bb:cc:dd:ee:ff",
-			"ff:ff:ff:ff:ff:ff")
-class IpDesc(FieldDesc):
-	def __init__(self, title):
-		super().__init__(title)
-		self.autocomp = ("192.168.0.1","192.168.0.2",
-			 "10.0.0.1", "10.0.0.2",
-			 "0.0.0.0","255.255.255.255")
-		
+		super().__init__(title, int)
+		self.autocomp = ("1","22","80", "8080","[1,4] #2", "(1,4) #4", "range(1,4) #3", "[(1,4),5,6] #5")
 	
 class ScapyTextField(flx.PyWidget):
 	pkt = None
@@ -42,29 +32,36 @@ class ScapyTextField(flx.PyWidget):
 	@flx.action
 	def load_pkt(self, pkt):
 		self.pkt = pkt
-		if self.desc.type == int:
-			v = pkt.fields.get(self.name,None)
-			if v != None:
-				self.w.set_text(str(v))
+		v = pkt.fields.get(self.name,None)
+		if type(v) == Net:
+			v = v.repr
+		elif type(v) == int:
+			v = str(v)
+		elif v == None:
+			v = ""
+		elif type(v) == str:
+			pass
 		else:
-			self.w.set_text(pkt.fields.get(self.name,""))
+			v = repr(v)
+		self.w.set_text(v)
 		
 	@flx.reaction('w.user_text')
 	def update_pkt(self, *events):
-		print(self.pkt)
 		if not self.pkt:
 			return
 		text = events[-1]['new_value'].strip()
-		print("user text")
-		if len(text):
-			if self.desc.type == int:
-				v = int(text)
-				exec("self._parent.pkt.{} = {}".format(self.name, v))
+		try:
+			if len(text):
+				if self.desc.type != str:
+					text = eval(text)
+				self._parent.pkt.setfieldval(self.name, text)
 			else:
-				exec("self._parent.pkt.{} = '{}'".format(self.name, text))
+				self._parent.pkt.fields.pop(self.name, None)
+			self._parent.on_update()
+		except Exception as e:
+			self.root.set_status(str(e))
 		else:
-			self._parent.pkt.fields.pop(self.name, None)
-		self._parent.on_update()
+			self.root.set_status("")
 	
 class MacField(ScapyTextField):
 	def init(self, parent, name, flex=1):
@@ -83,8 +80,6 @@ class PanelLayer(flx.PyWidget):
 			self.lbl_title = flx.Label()
 			with flx.VBox():
 				self._cont = flx.FormLayout()
-			with flx.VBox():
-				self._form = flx.FormLayout()
 			flx.Label()
 			self.lbl_scapy = flx.MultiLineEdit(flex=5)
 			flx.Label()
@@ -141,7 +136,6 @@ class LayerBase(flx.PyWidget):
 	
 	# field changed, update parent UI
 	def on_update(self):
-		print("LayerBasic on_update")
 		self.root.pnl_tx.show_pkt()
 			
 	@flx.reaction('btn_detail.pointer_click')
@@ -154,27 +148,3 @@ class LayerBase(flx.PyWidget):
 				pnl = self.cls_detail(self)
 		pnl.pkt_load(self.pkt)
 		self.root.show_panel(pnl)
-
-	# to be removed:	
-	def set_pkt_int(self, fld, val = None):
-		if val == None:
-			val = fld
-		cmd = """if len(self.{1}):
-	self.pkt.{0} = int(self.{1})
-else:
-	self.pkt.fields.pop('{0}', None)"""
-		cmd = cmd.format(fld, val)
-		exec(cmd)
-
-	def set_pkt_str(self, fld, val = None):
-		if val == None:
-			val = fld
-		cmd = """if len(self.{1}):
-	self.pkt.{0} = self.{1}
-else:
-	self.pkt.fields.pop('{0}', None)"""
-		cmd = cmd.format(fld, val)
-		exec(cmd)
-		
-
-

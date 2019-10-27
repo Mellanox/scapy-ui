@@ -3,8 +3,8 @@ from flexx import flx
 from layers.LayerBase import *
 
 udp_descs = {
-	"sport":FieldDesc("Source", int),
-	"dport":FieldDesc("Destination", int),
+	"sport":PortDesc("Source"),
+	"dport":PortDesc("Destination"),
 	"len":FieldDesc("Length", int),
 	"chksum":FieldDesc("Checksum", int)
 }
