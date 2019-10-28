@@ -47,10 +47,9 @@ class PanelTx(flx.PyWidget):
         self.layer_list = []
         with ui.VFix(flex=18):
             PanelLayers(css_class="title")
-            with flx.VBox(flex=7):
-                self._cont = flx.VBox()
-                flx.Label(flex=1)
-            self.pnl_dump = PanelDump(flex=11)
+            with ui.VSplit(flex=1):
+                self._cont = flx.VFix(flex=0)
+                self.pnl_dump = PanelDump(0, flex=1)
             PanelSend()
 
     def show_pkt(self):

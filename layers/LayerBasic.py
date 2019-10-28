@@ -15,7 +15,7 @@ class LayerBasic(flx.PyWidget):
             self.lbl_title = flx.Label(flex=4)
             self._cont = flx.HFix(flex=42)
             self.btn_detail = flx.Button(text="...", flex=2, disabled = not cls_detail)
-            self.btn_remove = flx.Button(text="x", flex=1)
+            self.btn_remove = flx.Button(text="-", flex=1)
             
     @flx.action
     def pkt_load(self, pkt):

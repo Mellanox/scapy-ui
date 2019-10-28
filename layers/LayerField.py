@@ -1,6 +1,7 @@
 from scapy.all import *
 from flexx import flx
 
+#TODO: generate UI field from Scapy field descriptors.
 class FieldDesc():
     placeholder=None
     autocomp=None

@@ -41,7 +41,7 @@ class ScapyUI(flx.PyWidget):
                 self.pnl_rx.set_parent(None)
                 self.pnl_browser = PanelBrowser(flex=1)
                 self.pnl_browser.set_parent(None)
-        self.load_config("test", Ether())
+        self.load_config("test", Ether()/IP()/"abcd")
                 
     def _show_panel(self, pnl):
         print("{} -> {}".format(self.pnl_active, pnl))
