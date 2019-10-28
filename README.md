@@ -11,7 +11,7 @@ A web based Scapy GUI, major features:
 
 Requirements:
 
-- pip3 install scapy flex psutil
+- pip3 install scapy flex python3-devel psutil
 
 Start:
 
@@ -19,7 +19,7 @@ Start:
 
 Setup a remote server:
 
-- sudo -H ./scapy-ui.py --flexx-host={host} --flexx-port=8080
+- sudo -H ./scapy-ui.py --flexx-hostname=`hostname`
 - http://{host}:8080/ScapyUI/
 
 TBD:
