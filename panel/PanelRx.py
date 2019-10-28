@@ -50,7 +50,7 @@ class Relay(flx.Component):
         self.sniffer.start()
 
     def sniff_stop(self):
-        if self.sniffer:
+        if self.sniffer and self.sniffer.running:
             self.sniffer.stop()
 
     def print_packet(self):
