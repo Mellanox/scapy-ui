@@ -11,16 +11,17 @@ A web based Scapy GUI, major features:
 
 Requirements:
 
-- python3
-- scapy
-- flex
+- pip3 install scapy flex psutil
 
 Start:
 
-- ./scapy-ui.py
-- http://localhost:49190/ScapyUI/
+- sudo -H ./scapy-ui.py --app
+
+# to setup a remote server:
+- sudo -H ./scapy-ui.py --flexx-host=<host> --flexx-port=8080
+- http://<host>:8080/ScapyUI/
 
 TBD:
 
-- Save packet to pcap file
+- Generate field from Scapy fields descriptors.
 - Better/more protocol editor
