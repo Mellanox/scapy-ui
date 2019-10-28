@@ -54,7 +54,7 @@ class PanelConfig(flx.PyWidget):
         if not cf.has_section('recent'):
             cf.add_section('recent')
         cf['recent'][name] = config
-        with open(self.cfg_name, "w") as f:
+        with open(os.open(self.cfg_name, os.O_CREAT | os.O_WRONLY, 0o777), "w") as f:
             cf.write(f)
         self.load_names()
     
