@@ -15,12 +15,12 @@ Requirements:
 
 Start:
 
-- sudo -H ./scapy-ui.py --app
+- sudo ./scapy-ui.py --app
 
 Setup a remote server:
 
-- sudo -H ./scapy-ui.py --flexx-hostname=`hostname`
-- http://{host}:8080/ScapyUI/
+- sudo ./scapy-ui.py --flexx-hostname=`hostname` --flexx-port=49190
+- http://{hostname}:49190/ScapyUI/
 
 TBD:
 

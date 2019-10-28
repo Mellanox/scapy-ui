@@ -21,10 +21,10 @@ class PanelSend(flx.PyWidget):
 
     @flx.reaction('btn_send.pointer_click')
     def _send_packet(self, *events):
-        packet = self.root.pnl_tx.pkt
-        count = int(self.txt_count.text)
-        inter = int(self.txt_interval.text)
         try:
+            packet = self.root.pnl_tx.get_pkt()
+            count = int(self.txt_count.text)
+            inter = int(self.txt_interval.text)
             sendp(packet, iface=self.lst_ifnames.text, count=count, inter=inter)
         except Exception as e:
             self.root.set_status(str(e))

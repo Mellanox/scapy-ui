@@ -2,7 +2,6 @@
 
 from scapy.all import *
 from flexx import flx, app
-import socket
 
 from panel.PanelConfig import *
 from panel.PanelSource import *
@@ -80,7 +79,7 @@ class ScapyUI(flx.PyWidget):
         self.set_status("")
 
     def save_config(self, name):
-        pkt = self.pnl_tx.pkt
+        pkt = self.pnl_tx.get_pkt()
         self.set_status(repr(pkt))
         self.pnl_config.save_config(name, pkt)
 
@@ -114,6 +113,5 @@ if __name__ == '__main__':
         flx.launch(ScapyUI)
         flx.run()
     else:
-        flx.config.hostname = socket.gethostname()
         app.serve(ScapyUI)
         app.start()
