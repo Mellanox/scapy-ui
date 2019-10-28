@@ -43,7 +43,6 @@ class PanelLayers(flx.PyWidget):
 
 class PanelTx(flx.PyWidget):
     def init(self):
-        self.pkt = None
         self.layer_list = []
         with ui.VFix(flex=18):
             PanelLayers(css_class="title")
@@ -52,10 +51,21 @@ class PanelTx(flx.PyWidget):
                 self.pnl_dump = PanelDump(0, flex=1)
             PanelSend()
 
+    def get_pkt(self):
+        pkt = None
+        for w in self.layer_list:
+            copy = w.pkt.copy()
+            if pkt:
+                pkt.add_payload(copy)
+            else:
+                pkt = copy
+        return pkt
+        
     def show_pkt(self):
-        self.pnl_dump.show_pkt(self.pkt)
+        self.pnl_dump.show_pkt(self.get_pkt())
 
     def add_layer(self, pkt):
+        pkt.remove_payload()
         cls = layers.get(type(pkt), None)
         if cls != None:
             with self._cont:
@@ -66,32 +76,23 @@ class PanelTx(flx.PyWidget):
             self.root.set_status("layer {} not defined".format(type(pkt)))
 
     def set_pkt(self, pkt):
-        self.pkt=pkt
         for w in self.layer_list:
             w.set_parent(None)
+        self.layer_list = []
         while pkt:
+            next = pkt.payload
             self.add_layer(pkt)
-            pkt = pkt.payload
+            pkt = next
         self.show_pkt()
 
     def add_payload(self, payload):
-        if self.pkt != None:
-            self.pkt.add_payload(payload)
-        else:
-            self.pkt = payload
         self.add_layer(payload)
         self.show_pkt()
 
     def remove_layer(self, layer):
-        pkt = self.pkt
-        if pkt == layer:
-            pkt = None
-        else:
-            while pkt.payload != layer:
-                pkt = pkt.payload
-            pkt.remove_payload()
-            pkt.add_payload(layer.payload)
-        self.set_pkt(pkt)
+        self.layer_list.remove(layer)
+        layer.set_parent(None)
+        self.show_pkt()
           
 #q=flx.App(QuickEditPanel);q.serve('');flx.start()
 

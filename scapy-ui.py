@@ -11,7 +11,7 @@ from panel.PanelBrowser import *
 
 class ScapyUI(flx.PyWidget):
     CSS = """
-        .center {align:center}
+        .center {padding: 7px auto; text-align: center;}
         .status {background-color:#f0f0f0;color:#aaaaaa}
         .list {overflow:auto;}
         .link {text-decoration:underline; color:blue;}
