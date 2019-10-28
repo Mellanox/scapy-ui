@@ -2,6 +2,7 @@
 
 from scapy.all import *
 from flexx import flx, app
+import socket
 
 from panel.PanelConfig import *
 from panel.PanelSource import *
@@ -113,5 +114,6 @@ if __name__ == '__main__':
         flx.launch(ScapyUI)
         flx.run()
     else:
+        flx.config.hostname = socket.gethostname()
         app.serve(ScapyUI)
         app.start()
