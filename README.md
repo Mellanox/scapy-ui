@@ -19,8 +19,8 @@ Start:
 
 Setup a remote server:
 
-- sudo -H ./scapy-ui.py --flexx-host=<host> --flexx-port=8080
-- http://<host>:8080/ScapyUI/
+- sudo -H ./scapy-ui.py --flexx-host={host} --flexx-port=8080
+- http://{host}:8080/ScapyUI/
 
 TBD:
 
