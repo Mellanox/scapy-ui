@@ -24,7 +24,7 @@ class PanelSend(flx.PyWidget):
         try:
             packet = self.root.pnl_tx.get_pkt()
             count = int(self.txt_count.text)
-            inter = int(self.txt_interval.text)
+            inter = float(self.txt_interval.text) / 1000
             ret = sendp(packet, iface=self.lst_ifnames.text, count=count, inter=inter, return_packets=True)
         except Exception as e:
             self.root.set_status(str(e))
