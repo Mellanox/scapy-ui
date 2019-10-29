@@ -15,8 +15,8 @@ tcp_descs = {
     "urgptr": FieldDesc("Urgent Pointer", int),
     "options": FieldDesc("Options", int,
         (
-            "(('Experiment', (0xf989, 0xcafe, 0x0102, 0x0002))",
-            "(('NOP', 0), ('MSS', 2))",
+            "[('Experiment', (0xf989, 0xcafe, 0x0102, 0x0002))]",
+            "[('NOP', 0), ('MSS', 2)]",
         )
     )
 }

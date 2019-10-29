@@ -10,12 +10,9 @@ class PanelLayerDetail(flx.PyWidget):
         self.set_flex(1)
         self._parent = parent
         self.descs = descs
-        with flx.VFix():
-            self.lbl_title = flx.Label()
-            with flx.VBox(flex=4):
-                self._cont = flx.FormLayout()
-                flx.Label(flex=1)
-            self.pnl_dump = PanelDump(flex=6)
+        with flx.VSplit():
+            self._cont = flx.FormLayout()
+            self.pnl_dump = PanelDump(flex=1)
 
     def build_fields(self):
         for name in self.descs.keys():
