@@ -32,7 +32,9 @@ class ScapyUI(flx.PyWidget):
                 self.btn_back = flx.Button(text="Back", flex=1, disabled = 1, css_class = "disabled")
             with flx.VBox(flex=1) as self.pnl_root:
                 with flx.HSplit(flex=1) as self.pnl_main:
-                    self.pnl_config = PanelConfig(flex=2)
+                    with flx.VBox(flex=2):
+                        flx.Label(html='<a href="https://scapy.net" target="_blank"><img src="https://scapy.net/img/logo.png" height="96" width="96"/></a>')
+                        self.pnl_config = PanelConfig(flex=1)
                     with flx.VBox(flex=8):
                         self.pnl_source = PanelSource() 
                         self.pnl_tx = PanelTx(flex=15)
