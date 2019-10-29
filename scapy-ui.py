@@ -10,7 +10,7 @@ from panel.PanelTx import *
 from panel.PanelBrowser import *
 
 logo_html = '<a href="https://scapy.net" target="_blank"><img src="https://scapy.net/img/logo.png" height="96" width="96"/></a>'
-title_html = '<a href="https://github.com/Mellanox/scapy-ui" target="_blank" title="for fools"><font size="+2">Scapy Web GUI</font></a>'
+title_html = '<a href="https://github.com/Mellanox/scapy-ui" target="_blank" title="Mellanox DPDK China group Hackathon project"><font size="+2">Scapy Web GUI</font></a>'
 class ScapyUI(flx.PyWidget):
     CSS = """
         .center {padding: 7px auto; text-align: center;}

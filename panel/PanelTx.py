@@ -2,17 +2,23 @@ from flexx import flx, ui
 import psutil
 from enum import IntEnum
 from scapy.all import *
-from layers.PanelIP import *
+from panel.PanelDump import *
+from panel.PanelSend import *
 from layers.PanelEther import *
 from layers.PanelDot1Q import *
+from layers.PanelIP import *
+from layers.PanelIPv6 import *
 from layers.PanelUDP import *
 from layers.PanelTCP import *
 from layers.PanelVXLAN import *
 from layers.PanelRaw import *
-from panel.PanelDump import *
-from panel.PanelSend import *
+from layers.PanelOthers import *
 
-layers = {Ether:LayerEther, Dot1Q:LayerDot1Q, IP:LayerIP, UDP:LayerUDP, TCP:LayerTCP, VXLAN:LayerVXLAN, Raw:LayerRaw}
+layers = {Ether:LayerEther, Dot1Q:LayerDot1Q,
+          IP:LayerIP, IPv6:LayerIPv6, ARP:LayerARP,
+          UDP:LayerUDP, TCP:LayerTCP, ICMP:LayerICMP,
+          VXLAN:LayerVXLAN, GRE:LayerGRE,
+          Raw:LayerRaw}
 
 class LayerButton(flx.PyWidget):
     def init(self, layer):

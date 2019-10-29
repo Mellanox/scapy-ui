@@ -5,17 +5,32 @@ from flexx import flx
 class FieldDesc():
     placeholder=None
     autocomp=None
-    def __init__(self, title, type=str, autocomp=None, placeholder=None):
+    def __init__(self, title, type=str, autocomp=None, placeholder=None, tip=None):
         self.title = title
         self.type = type
         self.autocomp = autocomp
         self.palceholder = placeholder
+        self.tip = tip
 
 class PortDesc(FieldDesc):
     def __init__(self, title):
         super().__init__(title, int)
         self.autocomp = ("1","22","80", "8080","[1,4] #2", "(1,4) #4", "range(1,4) #3", "[(1,4),5,6] #5")
-    
+class IpDesc(FieldDesc):
+    def __init__(self, title):
+        super().__init__(title)
+        self.autocomp = ("192.168.0.1","192.168.0.2","192.168.0.1/30",
+             "10.0.0.1", "10.0.0.2",
+             "0.0.0.0","255.255.255.255")
+class MacDesc(FieldDesc):
+    def __init__(self, title):
+        super().__init__(title)
+        self.autocomp = ("00:00:00:00:00:00",
+            "00:11:22:33:44:55",
+            "66:77:88:99:aa:bb",
+            "aa:bb:cc:dd:ee:ff",
+            "ff:ff:ff:ff:ff:ff")
+
 class ScapyTextField(flx.PyWidget):
     pkt = None
     def init(self, parent, name, flex=1):
