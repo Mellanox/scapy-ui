@@ -28,7 +28,7 @@ class ScapyUI(flx.PyWidget):
     """    
 
     def init(self):
-        with flx.VBox(flex=1):
+        with flx.VBox(flex=1, title="Scapy GUI"):
             with flx.HBox():
                 flx.Label(html=title_html, css_class="status")
                 self.lbl_status = flx.Label(text='...', flex=1, css_class="status")
@@ -114,7 +114,18 @@ class ScapyUI(flx.PyWidget):
         self.activate_panel(self.pnl_browser)
 
 if __name__ == '__main__':
-    if sys.argv[-1] == "--app":
+    if sys.argv[-1] in ["--help","-h"]:
+        print("""
+        Start Scapy web GUI in server mode which support multiple users.
+        Please open URL in broswer Chrome or Firefox
+        
+        Options:
+            --flexx-hostname=<host> Host/IP to listen on
+            --flexx-port=<port>     Port number to listen on
+            --app:                  Start as application single user mode, quit once page close.
+            --help(-h)              Show this help
+            """)
+    elif sys.argv[-1] == "--app":
         flx.launch(ScapyUI)
         flx.run()
     else:
