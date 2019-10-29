@@ -79,6 +79,9 @@ class PanelConfig(flx.PyWidget):
     def scapy_dump(self, pkt):
         list = []
         while not isinstance(pkt, NoPayload):
+            for (k,v) in pkt.fields.items():
+                if type(v) == FlagValue:
+                    pkt.fields[k] = v.value
             list.append([pkt.__class__.__name__, repr(pkt.fields)])
             pkt = pkt.payload
         return repr(list)
