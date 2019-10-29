@@ -39,24 +39,30 @@ class PanelConfig(flx.PyWidget):
                 self.lst_names.append(item)
 
     def load_config(self, name):
-        cf = configparser.ConfigParser()
-        cf.read(self.cfg_name)
-        config = cf['recent'][name]
-        pkt = self.parse_scapy(config)
-        if pkt != None:
-            self.root.load_config(name, pkt) 
+        try:
+            cf = configparser.ConfigParser()
+            cf.read(self.cfg_name)
+            config = cf['recent'][name]
+            pkt = self.parse_scapy(config)
+            if pkt != None:
+                self.root.load_config(name, pkt) 
+        except Exception as e:
+            self.root.set_status(str(e))
             
     def save_config(self, name, pkt):
-        cf = configparser.ConfigParser()
-        cf.read(self.cfg_name)
-        config = self.scapy_dump(pkt)
-        print(config)
-        if not cf.has_section('recent'):
-            cf.add_section('recent')
-        cf['recent'][name] = config
-        with open(self.cfg_name, "w") as f:
-            cf.write(f)
-        self.load_names()
+        try:
+            cf = configparser.ConfigParser()
+            cf.read(self.cfg_name)
+            config = self.scapy_dump(pkt)
+            print(config)
+            if not cf.has_section('recent'):
+                cf.add_section('recent')
+            cf['recent'][name] = config
+            with open(self.cfg_name, "w") as f:
+                cf.write(f)
+            self.load_names()
+        except Exception as e:
+            self.root.set_status(str(e))
     
     def del_config(self, name):
         cf = configparser.ConfigParser()
