@@ -4,6 +4,7 @@ from enum import IntEnum
 from scapy.all import *
 from layers.PanelIP import *
 from layers.PanelEther import *
+from layers.PanelDot1Q import *
 from layers.PanelUDP import *
 from layers.PanelTCP import *
 from layers.PanelVXLAN import *
@@ -11,7 +12,7 @@ from layers.PanelRaw import *
 from panel.PanelDump import *
 from panel.PanelSend import *
 
-layers = {Ether:LayerEther, IP:LayerIP, UDP:LayerUDP, TCP:LayerTCP, VXLAN:LayerVXLAN, Raw:LayerRaw}
+layers = {Ether:LayerEther, Dot1Q:LayerDot1Q, IP:LayerIP, UDP:LayerUDP, TCP:LayerTCP, VXLAN:LayerVXLAN, Raw:LayerRaw}
 
 class LayerButton(flx.PyWidget):
     def init(self, layer):
