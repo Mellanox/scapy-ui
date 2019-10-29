@@ -9,7 +9,8 @@ class PanelSend(flx.PyWidget):
         with ui.VBox():
             with ui.HFix():
                 ui.Label(text="Port:", flex=2)
-                self.lst_ifnames = ui.ComboBox(editable=False, options=ifnames, selected_key=ifnames[0], flex=2)
+                iface = self.root.pnl_config.get_section_config("common", "iface", "lo")
+                self.lst_ifnames = ui.ComboBox(editable=False, options=ifnames, selected_key=iface, flex=2)
                 ui.Label(text=" ", flex=3)
                 ui.Label(text='Count:', flex=2)
                 self.txt_count = ui.LineEdit(text='1', flex=2)
@@ -30,4 +31,5 @@ class PanelSend(flx.PyWidget):
             self.root.set_status(str(e))
         else:
             self.root.set_status("sent {} packets".format(len(ret)))
+            self.root.pnl_config.set_section_config("common", "iface", self.lst_ifnames.text)
 

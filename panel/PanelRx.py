@@ -9,7 +9,7 @@ import psutil
 
 
 p_list = []
-ifname_list = []
+ifnames = list(psutil.net_if_addrs().keys())
 
 class ListLabel(flx.Widget):
     idx = 0
@@ -39,7 +39,6 @@ class Relay(flx.Component):
 
     def init(self):
         self.sniffer = None
-        self.ifname = list(psutil.net_if_addrs().keys())
         self.refresh()
 
     def sniff_start(self, ifname):
@@ -100,25 +99,28 @@ class PanelRx(flx.PyWidget):
         with flx.VBox():
             self.root.set_status('Sniffing')
             with flx.HBox():
-                self.iface=flx.ComboBox(options=relay.ifname, flex=2)
+                iface = self.root.pnl_config.get_section_config("common", "iface", "lo")
+                self.iface=flx.ComboBox(options=ifnames, flex=2, selected_key=iface)
                 self.start_stop=flx.Button(text="start", flex=1)
                 flx.Label(text="", flex=6)
             self.view = PanelRxView(flex=1)
 
-    @event.reaction
-    def update_iface(self):
-        if self.iface.selected_index is not None:
-            self.ifname = self.iface.text
-
     @event.reaction('start_stop.pointer_click')
     def _start_stop_clicked(self, *events):
-        if self.start_stop.text == "start":
+        if self.start_stop.text != "stop":
             self.view.clear_info()
-            relay.sniff_start(self.ifname)
+            relay.sniff_start(self.iface.text)
             self.start_stop.set_text('stop')
         else:
+            self._stop_sniff()
+
+    def _stop_sniff(self):
+        try:
             relay.sniff_stop()
-            self.start_stop.set_text('start')
+            self.root.pnl_config.set_section_config("common", "iface", self.iface.text)
+        except Exception as e:
+            self.root.set_status(str(e))
+        self.start_stop.set_text('start')
 
     @relay.reaction('!packet_info')
     def _push_packet(self, *events):
@@ -137,7 +139,7 @@ class PanelRx(flx.PyWidget):
                                    pkt_detail=p.show(dump=True)))
 
     def on_apply(self):
-        relay.sniff_stop()
+        self._stop_sniff()
 
 class PanelRxView(flx.Widget):
     CSS = """

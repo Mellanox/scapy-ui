@@ -96,3 +96,19 @@ class PanelConfig(flx.PyWidget):
                 pkt.add_payload(layer)
         return pkt
 
+    def set_section_config(self, section, name, val):
+        cf = configparser.ConfigParser()
+        cf.read(self.cfg_name)
+        if not cf.has_section(section):
+            cf.add_section(section)
+        cf[section][name] = val
+        with open(self.cfg_name, "w") as f:
+            cf.write(f)
+
+    def get_section_config(self, section, name, default=None):
+        cf = configparser.ConfigParser()
+        cf.read(self.cfg_name)
+        if not cf.has_section(section):
+            cf.add_section(section)
+        return cf[section].get(name, default)
+            
