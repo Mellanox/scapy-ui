@@ -100,6 +100,8 @@ class PanelRx(flx.PyWidget):
             self.root.set_status('Sniffing')
             with flx.HBox():
                 iface = self.root.pnl_config.get_section_config("common", "iface", "lo")
+                if ifnames.count(iface) == 0:
+                    iface = "lo"
                 self.iface=flx.ComboBox(options=ifnames, flex=2, selected_key=iface)
                 self.start_stop=flx.Button(text="start", flex=1)
                 flx.Label(text="", flex=6)
