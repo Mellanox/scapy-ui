@@ -9,6 +9,8 @@ from panel.PanelRx import *
 from panel.PanelTx import *
 from panel.PanelBrowser import *
 
+logo_html = '<a href="https://scapy.net" target="_blank"><img src="https://scapy.net/img/logo.png" height="96" width="96"/></a>'
+title_html = '<a href="https://github.com/Mellanox/scapy-ui" target="_blank" title="for fools"><font size="+2">Scapy Web GUI</font></a>'
 class ScapyUI(flx.PyWidget):
     CSS = """
         .center {padding: 7px auto; text-align: center;}
@@ -27,13 +29,14 @@ class ScapyUI(flx.PyWidget):
 
     def init(self):
         with flx.VBox(flex=1):
-            with flx.HFix():
-                self.lbl_status = flx.Label(text='...', flex=9, css_class="status")
-                self.btn_back = flx.Button(text="Back", flex=1, disabled = 1, css_class = "disabled")
+            with flx.HBox():
+                flx.Label(html=title_html, css_class="status")
+                self.lbl_status = flx.Label(text='...', flex=1, css_class="status")
+                self.btn_back = flx.Button(text="Apply & Back", disabled = 1, css_class = "disabled")
             with flx.VBox(flex=1) as self.pnl_root:
                 with flx.HSplit(flex=1) as self.pnl_main:
                     with flx.VBox(flex=2):
-                        flx.Label(html='<a href="https://scapy.net" target="_blank"><img src="https://scapy.net/img/logo.png" height="96" width="96"/></a>')
+                        flx.Label(html=logo_html)
                         self.pnl_config = PanelConfig(flex=1)
                     with flx.VBox(flex=8):
                         self.pnl_source = PanelSource() 
