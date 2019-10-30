@@ -1,16 +1,17 @@
 from scapy.all import *
 from flexx import flx
 
+
 #TODO: generate UI field from Scapy field descriptors.
 class FieldDesc():
     placeholder=None
     autocomp=None
-    def __init__(self, title, type=str, autocomp=None, placeholder=None, tip=None):
+    def __init__(self, title, type=str, autocomp=None, placeholder=None, url=None):
         self.title = title
         self.type = type
         self.autocomp = autocomp
         self.palceholder = placeholder
-        self.tip = tip
+        self.url = url
 
 class PortDesc(FieldDesc):
     def __init__(self, title):

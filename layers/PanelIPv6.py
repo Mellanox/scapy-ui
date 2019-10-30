@@ -11,7 +11,7 @@ ipv6_descs = {
     "version":FieldDesc("Version", int),
     "tc":FieldDesc("Traffic Class", int),
     "fl":FieldDesc("Flow Label", int),
-    "plen":FieldDesc("Length", int),
+    "plen":FieldDesc("Payload Length", int),
     "nh":FieldDesc("Next Header", int),
     "hlim":FieldDesc("Hop Limit", int),
     "src":Ipv6Desc("Source"),

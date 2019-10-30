@@ -2,6 +2,7 @@ from scapy.all import *
 from flexx import flx
 from layers.LayerField import *
 from panel.PanelDump import *
+from util.ScapyUtil import *
 
 # Layer detail panel
 class PanelLayerDetail(flx.PyWidget):
@@ -11,9 +12,11 @@ class PanelLayerDetail(flx.PyWidget):
         self._parent = parent
         self.descs = descs
         with flx.VSplit():
-            self._cont = flx.FormLayout()
+            with flx.VBox():
+                self.lbl_title = flx.Label(css_class="center")
+                self._cont = flx.FormLayout()
             self.pnl_dump = PanelDump(flex=1)
-
+        
     def build_fields(self):
         for name in self.descs.keys():
             with self._cont:
@@ -21,7 +24,7 @@ class PanelLayerDetail(flx.PyWidget):
 
     def pkt_load(self, pkt):
         self.pkt = pkt
-        # self.lbl_title.set_text(pkt.__class__._name)
+        link_layer(self.lbl_title, type(pkt))
         for w in self.fields:
             w.load_pkt(pkt)
         self.on_update() 

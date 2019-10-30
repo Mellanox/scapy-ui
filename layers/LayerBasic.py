@@ -2,7 +2,7 @@ from scapy.all import *
 from flexx import flx
 from layers.LayerField import *
 from layers.LayerDetail import *
-
+from util.ScapyUtil import *
 
 class LayerBasic(flx.PyWidget):
     scapy = flx.StringProp(settable=True)
@@ -19,7 +19,7 @@ class LayerBasic(flx.PyWidget):
             
     def pkt_load(self, pkt):
         self.pkt = pkt
-        self.lbl_title.set_text(pkt.__class__._name)
+        link_layer(self.lbl_title, type(pkt))
         self.pkt_load_fields()
         
     def pkt_load_fields(self):
