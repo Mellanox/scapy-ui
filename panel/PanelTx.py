@@ -54,7 +54,8 @@ class PanelTx(flx.PyWidget):
         with ui.VFix(flex=18):
             PanelLayers(css_class="title")
             with ui.VSplit(flex=1):
-                self._cont = flx.VFix(flex=0)
+                with flx.VBox() as self.__cont:
+                    self._cont = flx.VFix(flex=1)
                 self.pnl_dump = PanelDump(0, flex=1)
             PanelSend()
 
@@ -83,6 +84,7 @@ class PanelTx(flx.PyWidget):
             self.root.set_status("layer {} not defined".format(type(pkt)))
 
     def set_pkt(self, pkt):
+        self._cont.set_parent(None)
         for w in self.layer_list:
             w.set_parent(None)
         self.layer_list = []
@@ -90,6 +92,7 @@ class PanelTx(flx.PyWidget):
             next = pkt.payload
             self.add_layer(pkt)
             pkt = next
+        self._cont.set_parent(self.__cont)
         self.show_pkt()
 
     def add_payload(self, payload):
