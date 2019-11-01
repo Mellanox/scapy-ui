@@ -6,12 +6,13 @@ from flexx import flx
 class FieldDesc():
     placeholder=None
     autocomp=None
-    def __init__(self, title, type=str, autocomp=None, placeholder=None, url=None):
+    def __init__(self, title, type=str, autocomp=None, placeholder=None, url=None, widget="LineEdit"):
         self.title = title
         self.type = type
         self.autocomp = autocomp
         self.palceholder = placeholder
         self.url = url
+        self.widget = widget
 
 class PortDesc(FieldDesc):
     def __init__(self, title):
@@ -34,17 +35,20 @@ class MacDesc(FieldDesc):
 
 class ScapyTextField(flx.PyWidget):
     pkt = None
-    def init(self, parent, name, flex=1):
+    def init(self, parent, name, flex=1, widget="LineEdit"):
         self._parent = parent
         self.name = name
         self.desc = parent.descs[name]
         with parent._cont:
-            self.w = flx.LineEdit(flex=flex, title=self.desc.title)
+            if widget == "MultiLineEdit":
+                self.w = flx.MultiLineEdit(flex=flex, title=self.desc.title, style="height: 100%; min-height: 200px")
+            else:
+                self.w = flx.LineEdit(flex=flex, title=self.desc.title)
+                if self.desc.placeholder:
+                    self.w.set_placeholder_text(self.desc.placeholder)
+                if self.desc.autocomp:
+                    self.w.set_autocomp(self.desc.autocomp)
         self._parent.fields.append(self)
-        if self.desc.placeholder:
-            self.w.set_placeholder_text(self.desc.placeholder)
-        if self.desc.autocomp:
-            self.w.set_autocomp(self.desc.autocomp)
     
     @flx.action
     def load_pkt(self, pkt):

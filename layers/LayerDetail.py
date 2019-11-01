@@ -11,16 +11,15 @@ class PanelLayerDetail(flx.PyWidget):
         self.set_flex(1)
         self._parent = parent
         self.descs = descs
+        self.lbl_title = flx.Label(css_class="center")
         with flx.VSplit():
-            with flx.VBox():
-                self.lbl_title = flx.Label(css_class="center")
-                self._cont = flx.FormLayout()
+            self._cont = flx.FormLayout()
             self.pnl_dump = PanelDump(flex=1)
         
     def build_fields(self):
-        for name in self.descs.keys():
+        for (name, desc) in self.descs.items():
             with self._cont:
-                ScapyTextField(self, name)
+                ScapyTextField(self, name, 1, desc.widget)
 
     def pkt_load(self, pkt):
         self.pkt = pkt

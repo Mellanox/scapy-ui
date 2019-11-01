@@ -3,7 +3,7 @@ from flexx import flx
 from layers.LayerBasic import *
 
 raw_descs = {
-    "load":FieldDesc("Raw", bytes, ("'abcd'","'a' * 10"))
+    "load":FieldDesc("Raw", bytes, ("'abcd'", "'a' * 10", 'bytes.fromhex("00 01 02 03")'), widget="MultiLineEdit")
 }
 
 class LayerRaw(LayerBasic):
