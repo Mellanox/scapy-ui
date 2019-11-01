@@ -93,11 +93,11 @@ class PanelConfig(flx.PyWidget):
         return repr(list)
     
     def parse_scapy(self, str):
-        list = eval(str)
+        list = eval(str, {}, {})
         pkt = None
         for layer_config in list:
-            layer = eval(layer_config[0]+"()")
-            fields = eval(layer_config[1])
+            layer = eval(layer_config[0]+"()", {}, {})
+            fields = eval(layer_config[1], {}, {})
             layer.fields = fields
             if pkt == None:
                 pkt = layer

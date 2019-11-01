@@ -70,7 +70,7 @@ class ScapyTextField(flx.PyWidget):
         try:
             if len(text):
                 if self.desc.type != str:
-                    text = eval(text)
+                    text = eval(text, {}, {})
                 self._parent.pkt.setfieldval(self.name, text)
             else:
                 self._parent.pkt.fields.pop(self.name, None)
