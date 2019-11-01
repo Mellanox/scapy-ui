@@ -81,7 +81,7 @@ class PanelTx(flx.PyWidget):
                 w.pkt_load(pkt)
                 self.layer_list.append(w)
         else: 
-            self.root.set_status("layer {} not defined".format(type(pkt)))
+            self.root.set_status(f"layer {type(pkt)} not defined")
 
     def set_pkt(self, pkt):
         self._cont.set_parent(None)

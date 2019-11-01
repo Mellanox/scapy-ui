@@ -30,6 +30,6 @@ class PanelSend(flx.PyWidget):
         except Exception as e:
             self.root.set_status(str(e))
         else:
-            self.root.set_status("sent {} packets".format(len(ret)))
+            self.root.set_status(f"sent {len(ret)} packets")
             self.root.pnl_config.set_section_config("common", "iface", self.lst_ifnames.text)
 

@@ -49,7 +49,6 @@ class ScapyUI(flx.PyWidget):
         self.load_config("test", Ether()/IP()/"abcd")
                 
     def _show_panel(self, pnl):
-        print("{} -> {}".format(self.pnl_active, pnl))
         pnl.set_parent(self.pnl_root) #_jswidget)  # Attach
         if self.pnl_active != None:
             self.pnl_active.set_parent(None)  # Detach
@@ -99,7 +98,7 @@ class ScapyUI(flx.PyWidget):
         pkts = rdpcap(file)
         self.show_rx()
         self.pnl_rx.load_pkts(pkts)
-        self.set_status("Loaded file: {}".format(file))
+        self.set_status(f"Loaded file: {file}")
 
     def _on_save_file(self, file, pkt):
         pkts = wrpcap(file, pkt)
