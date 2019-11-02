@@ -1,6 +1,6 @@
 from scapy.all import *
 from flexx import flx
-from layers.LayerBasic import *
+from layers.LayerPanel import *
 
 
 ip_descs = {
@@ -15,7 +15,7 @@ ip_descs = {
     "chksum":FieldDesc("Checksum", int)
 }
 
-class LayerIP(LayerBasic):
+class LayerIP(PanelProtocolRow):
     def init(self):
         super().init(ip_descs)
         with self._cont:

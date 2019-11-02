@@ -2,6 +2,7 @@ from flexx import flx, ui
 import psutil
 from enum import IntEnum
 from scapy.all import *
+from util.ScapyUtil import *
 
 class PanelDump(ui.PyWidget):
     CSS = """
@@ -44,7 +45,7 @@ class PanelDump(ui.PyWidget):
     def show_pkt(self, pkt, rep=None):
         self.pkt = pkt
         if pkt:
-            self.lbl_repr.set_text(rep if rep else repr(pkt))
+            self.lbl_repr.set_text(get_repr_str(rep) if rep else repr(pkt))
             self.txt_show.set_text(pkt.show(dump=True))
             self.txt_hex.set_text(hexdump(pkt, dump=True))
             self.btn_save.set_disabled(0)

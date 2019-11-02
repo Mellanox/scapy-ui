@@ -1,6 +1,6 @@
 from scapy.all import *
 from flexx import flx
-from layers.LayerBasic import *
+from layers.LayerPanel import *
 
 icmp_descs = {
     "type":FieldDesc("Type", int, ("8 #send", "0 #resp")),
@@ -10,7 +10,7 @@ icmp_descs = {
     "seq":FieldDesc("Sequence #", int),
 }
 
-class LayerICMP(LayerBasic):
+class LayerICMP(PanelProtocolRow):
     def init(self):
         super().init(icmp_descs)
         with self._cont:
@@ -26,7 +26,7 @@ mpls_descs = {
     "seq":FieldDesc("Sequence #", int),
 }
 
-class LayerICMP(LayerBasic):
+class LayerICMP(PanelProtocolRow):
     def init(self):
         super().init(icmp_descs)
         with self._cont:
@@ -46,7 +46,7 @@ arp_descs = {
     "pdst":IpDesc("Destination IP"),
 }
 
-class LayerARP(LayerBasic):
+class LayerARP(PanelProtocolRow):
     def init(self):
         super().init(arp_descs)
         with self._cont:
@@ -70,7 +70,7 @@ gre_descs = {
     "seqence_number":FieldDesc("Sequence #", int),
 }
 
-class LayerGRE(LayerBasic):
+class LayerGRE(PanelProtocolRow):
     def init(self):
         super().init(gre_descs)
         with self._cont:

@@ -1,13 +1,13 @@
 from scapy.all import *
 from flexx import flx
-from layers.LayerBasic import *
+from layers.LayerPanel import *
 
 vxlan_descs = {
     "vni":FieldDesc("VNI", int),
     "flags":FieldDesc("Flags", int),
 }
 
-class LayerVXLAN(LayerBasic):
+class LayerVXLAN(PanelProtocolRow):
     def init(self):
         super().init(vxlan_descs)
         with self._cont:

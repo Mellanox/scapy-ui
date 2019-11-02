@@ -1,6 +1,6 @@
 from scapy.all import *
 from flexx import flx
-from layers.LayerBasic import *
+from layers.LayerPanel import *
 
 dot1q_descs = {
     "vlan":FieldDesc("VLAN", int),
@@ -9,7 +9,7 @@ dot1q_descs = {
     "type":FieldDesc("Type", int)
 }
 
-class LayerDot1Q(LayerBasic):
+class LayerDot1Q(PanelProtocolRow):
     def init(self):
         super().init(dot1q_descs)
         with self._cont:

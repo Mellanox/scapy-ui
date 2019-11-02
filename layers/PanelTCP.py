@@ -1,6 +1,6 @@
 from scapy.all import *
 from flexx import flx
-from layers.LayerBasic import *
+from layers.LayerPanel import *
 
 tcp_descs = {
     "sport": PortDesc("Source Port"),
@@ -21,7 +21,7 @@ tcp_descs = {
     )
 }
 
-class LayerTCP(LayerBasic):
+class LayerTCP(PanelProtocolRow):
     def init(self):
         super().init(tcp_descs)
         with self._cont:

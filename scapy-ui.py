@@ -9,6 +9,7 @@ from panel.PanelRx import *
 from panel.PanelTx import *
 from panel.PanelBrowser import *
 
+
 logo_html = '<a href="https://scapy.net" target="_blank"><img src="https://scapy.net/img/logo.png" height="96" width="96"/></a>'
 title_html = '<a href="https://github.com/Mellanox/scapy-ui" target="_blank" title="Mellanox DPDK China group Hackathon project"><font size="+2">Scapy Web GUI</font></a>'
 class ScapyUI(flx.PyWidget):
@@ -46,7 +47,7 @@ class ScapyUI(flx.PyWidget):
                 self.pnl_rx.set_parent(None)
                 self.pnl_browser = PanelBrowser(flex=1)
                 self.pnl_browser.set_parent(None)
-        self.load_config("test", Ether()/IP()/"abcd")
+        self.load_config("test", [["Ether", {}], ["IP", {}], ["Raw", {"load":"'abcd'"}]])
                 
     def _show_panel(self, pnl):
         pnl.set_parent(self.pnl_root) #_jswidget)  # Attach
@@ -79,16 +80,13 @@ class ScapyUI(flx.PyWidget):
 
     def load_config(self, name, pkt):
         self.pnl_source.txt_name.set_text(name)
-        self.pnl_tx.set_pkt(pkt)
-        self.set_status("")
+        self.pnl_tx.set_pkt_repr(pkt)
 
     def save_config(self, name):
-        pkt = self.pnl_tx.get_pkt()
-        self.set_status(repr(pkt))
+        pkt = self.pnl_tx.get_pkt_repr()
         self.pnl_config.save_config(name, pkt)
 
     def del_config(self, name):
-        self.set_status("")
         self.pnl_config.del_config(name)
 
     def set_status(self, status):
@@ -101,8 +99,8 @@ class ScapyUI(flx.PyWidget):
         self.set_status(f"Loaded file: {file}")
 
     def _on_save_file(self, file, pkt):
-        pkts = wrpcap(file, pkt)
-        self.set_status("Saved to file: {}".format(file))
+        wrpcap(file, pkt)
+        self.set_status(f"Saved to file: {file}")
 
     def load_pcap(self):
         self.pnl_browser.set_callback(self._on_load_file)

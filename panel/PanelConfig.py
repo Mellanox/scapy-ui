@@ -21,7 +21,6 @@ class PanelConfig(flx.PyWidget):
             self.btn_load = flx.Button(text='Load Pcap...')
             self.btn_sniff = flx.Button(text='Sniff...')
         self.load_names()
-        
 
     def load_names(self):
         for item in self.lst_names:
@@ -43,23 +42,25 @@ class PanelConfig(flx.PyWidget):
             cf = configparser.ConfigParser()
             cf.read(self.cfg_name)
             config = cf['recent'][name]
-            pkt = self.parse_scapy(config)
+            pkt = eval(config, {}, {})
             if pkt != None:
-                self.root.load_config(name, pkt) 
+                self.root.load_config(name, pkt)
+            self.root.set_status(f"config loaded: {name}")
         except Exception as e:
+            print(e)
             self.root.set_status(str(e))
             
     def save_config(self, name, pkt):
         try:
             cf = configparser.ConfigParser()
             cf.read(self.cfg_name)
-            config = self.scapy_dump(pkt)
-            print(config)
+            config = repr(pkt)
             if not cf.has_section('recent'):
                 cf.add_section('recent')
             cf['recent'][name] = config
             with open(self.cfg_name, "w") as f:
                 cf.write(f)
+            self.root.set_status(f"config saved: {name}")
             self.load_names()
         except Exception as e:
             self.root.set_status(str(e))
@@ -72,6 +73,7 @@ class PanelConfig(flx.PyWidget):
         cf['recent'].pop(name, None)
         with open(self.cfg_name, "w") as f:
             cf.write(f)
+        self.root.set_status(f"deleted config: {name}")
         self.load_names()
 
     @flx.reaction('btn_load.pointer_click')
@@ -81,29 +83,6 @@ class PanelConfig(flx.PyWidget):
     @flx.reaction('btn_sniff.pointer_click')
     def on_sniff(self, *events):
         self.root.show_rx()
-
-    def scapy_dump(self, pkt):
-        list = []
-        while not isinstance(pkt, NoPayload):
-            for (k,v) in pkt.fields.items():
-                if type(v) == FlagValue:
-                    pkt.fields[k] = v.value
-            list.append([pkt.__class__.__name__, repr(pkt.fields)])
-            pkt = pkt.payload
-        return repr(list)
-    
-    def parse_scapy(self, str):
-        list = eval(str, {}, {})
-        pkt = None
-        for layer_config in list:
-            layer = eval(layer_config[0]+"()", {}, {})
-            fields = eval(layer_config[1], {}, {})
-            layer.fields = fields
-            if pkt == None:
-                pkt = layer
-            else:
-                pkt.add_payload(layer)
-        return pkt
 
     def set_section_config(self, section, name, val):
         cf = configparser.ConfigParser()

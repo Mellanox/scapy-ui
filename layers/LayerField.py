@@ -36,7 +36,7 @@ class MacDesc(FieldDesc):
 class ScapyTextField(flx.PyWidget):
     pkt = None
     def init(self, parent, name, flex=1, widget="LineEdit"):
-        self._parent = parent
+        self._parent = parent # PanelProtocolAbstract
         self.name = name
         self.desc = parent.descs[name]
         self.text = ""
@@ -51,34 +51,30 @@ class ScapyTextField(flx.PyWidget):
                     self.w.set_autocomp(self.desc.autocomp)
         self._parent.fields.append(self)
     
-    def load_pkt(self, pkt):
-        self.pkt = pkt
-        v = pkt.fields.get(self.name,None)
-        if type(v) == Net:
-            v = v.repr
-        elif type(v) == int:
-            v = str(v)
-        elif v == None:
-            v = ""
-        elif type(v) == str:
-            pass
-        else:
-            v = repr(v)
+    # load field value from packet
+    def load_pkt_repr(self):
+        if not self.name in self._parent.field_reprs:
+            self.w.set_text("")
+            return
+        v = self._parent.field_reprs[self.name]
         self.w.set_text(v)
-        self.text = v
-        
+        self.update_pkt_field(v)
+
     @flx.reaction('w.user_text')
     def update_pkt(self, *events):
-        if not self.pkt:
-            return
-        text = events[-1]['new_value'].strip()
-        self.set_field_txt(text)
+        text = events[-1]['new_value']
+        rep = text.strip()
+        if len(rep):
+            self._parent.field_reprs[self.name] = rep
+        else:
+            self._parent.field_reprs.pop(self.name, None)
+        self.update_pkt_field(rep)
         self._parent.on_update()
     
     # set text value of pkt field
-    def set_field_txt(self, text):
+    def update_pkt_field(self, text):
         try:
-            if len(text):
+            if text and len(text):
                 if self.desc.type != str:
                     val = eval(text, {}, {})
                 else:
@@ -86,18 +82,9 @@ class ScapyTextField(flx.PyWidget):
                 self._parent.pkt.setfieldval(self.name, val)
             else:
                 self._parent.pkt.fields.pop(self.name, None)
-            self.text = text
         except Exception as e:
+            print(e)
             self.root.set_status(str(e))
         else:
             self.root.set_status("")
     
-    def get_repr(self):
-        txt = self.text
-        if not len(txt):
-            return None
-        if self.desc.type == str:
-            return repr(txt)
-        else:
-            print(txt)
-            return txt

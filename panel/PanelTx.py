@@ -22,13 +22,12 @@ layers = {Ether:LayerEther, Dot1Q:LayerDot1Q,
 
 class LayerButton(flx.PyWidget):
     def init(self, layer):
-        self.layer = layer
+        self.layer = layer #protocol class
         self.btn = flx.Label(text=layer._name, css_class="link", flex=1)
 
     @flx.reaction('btn.pointer_click')
     def on_click(self, *events):
-        layer = self.layer()
-        self.root.pnl_tx.add_payload(layer)
+        self.root.pnl_tx.add_layer(self.layer)
 
 
 class PanelLayers(flx.PyWidget): 
@@ -69,53 +68,38 @@ class PanelTx(flx.PyWidget):
                 pkt = copy
         return pkt
         
-    # get expr of pkt being edit: Ehter(src="2", type=1)/IP()
+    # get pkt being edit: list of (class, map of fields)
+    # [[scapy.layers.l2.Ehter , {"src":"2", "type":1}], [scapy.layers.inet.IP, {}]]
     def get_pkt_repr(self):
         list = []
         for w in self.layer_list:
-            list.append((w.pkt.name, w.get_field_repr()))
+            list.append(w.get_pkt_repr()[0])
         return list
 
-    # get string expr of pkt being edit: Ehter(src="2", type=1)/IP()
-    def get_repr_str(self):
-        list_pkt_repr = self.get_pkt_repr()
-        print(list_pkt_repr)
-        list_pkt_str = []
-        for (cls, map) in list_pkt_repr:
-            list_field_str = []
-            for (k,v) in map.items():
-                list_field_str.append(k + "=" + v)
-            list_pkt_str.append(cls + "(" + ",".join(list_field_str) + ")")
-        return "/".join(list_pkt_str)
-
     def show_pkt(self):
-        self.pnl_dump.show_pkt(self.get_pkt(), self.get_repr_str())
+        self.pnl_dump.show_pkt(self.get_pkt(), self.get_pkt_repr())
 
-    def add_layer(self, pkt):
-        pkt.remove_payload()
-        cls = layers.get(type(pkt), None)
-        if cls != None:
-            with self._cont:
-                w = cls()
-                w.pkt_load(pkt)
-                self.layer_list.append(w)
-        else: 
-            self.root.set_status(f"layer {type(pkt)} not defined")
-
-    def set_pkt(self, pkt):
+    # [[cls,field_map{}]]
+    def set_pkt_repr(self, pkt):
         self._cont.set_parent(None)
         for w in self.layer_list:
             w.set_parent(None)
         self.layer_list = []
-        while pkt:
-            next = pkt.payload
-            self.add_layer(pkt)
-            pkt = next
+        if pkt:
+            for (cls, fields) in pkt:
+                self.add_layer_repr(eval(cls), fields)
         self._cont.set_parent(self.__cont)
         self.show_pkt()
 
-    def add_payload(self, payload):
-        self.add_layer(payload)
+    def add_layer_repr(self, pkt_cls, fields):
+        cls = layers.get(pkt_cls, None)
+        with self._cont:
+            w = cls()
+            w.pkt_load_repr(pkt_cls(), fields)
+            self.layer_list.append(w)
+
+    def add_layer(self, cls):
+        self.add_layer_repr(cls, {})
         self.show_pkt()
 
     def remove_layer(self, layer):

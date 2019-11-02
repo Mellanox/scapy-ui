@@ -1,6 +1,6 @@
 from scapy.all import *
 from flexx import flx
-from layers.LayerBasic import *
+from layers.LayerPanel import *
 
 class Ipv6Desc(FieldDesc):
     def __init__(self, title):
@@ -18,7 +18,7 @@ ipv6_descs = {
     "dst":Ipv6Desc("Destination"),
 }
 
-class LayerIPv6(LayerBasic):
+class LayerIPv6(PanelProtocolRow):
     def init(self):
         super().init(ipv6_descs)
         with self._cont:
