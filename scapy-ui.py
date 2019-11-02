@@ -29,7 +29,7 @@ class ScapyUI(flx.PyWidget):
     """    
 
     def init(self):
-        with flx.VBox(flex=1, title="Scapy GUI"):
+        with flx.VBox(flex=1, title="Scapy GUI", tabindex=0) as self.pnl_app:
             with flx.HBox():
                 flx.Label(html=title_html, css_class="status")
                 self.lbl_status = flx.Label(text='...', flex=1, css_class="status")
@@ -74,6 +74,14 @@ class ScapyUI(flx.PyWidget):
     def on_back(self, *events):
         self.pnl_active.on_apply()
         self.close_panel()
+
+    @flx.reaction('pnl_app.key_down')
+    def on_esc(self, *events):
+        if self.btn_back.disabled:
+            return
+        e = events[-1]
+        if e['key']=='Escape' and len(e['modifiers'])==0:
+            self.on_back(events)
 
     def show_rx(self):
         self.activate_panel(self.pnl_rx)
