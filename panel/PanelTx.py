@@ -69,8 +69,27 @@ class PanelTx(flx.PyWidget):
                 pkt = copy
         return pkt
         
+    # get expr of pkt being edit: Ehter(src="2", type=1)/IP()
+    def get_pkt_repr(self):
+        list = []
+        for w in self.layer_list:
+            list.append((w.pkt.name, w.get_field_repr()))
+        return list
+
+    # get string expr of pkt being edit: Ehter(src="2", type=1)/IP()
+    def get_repr_str(self):
+        list_pkt_repr = self.get_pkt_repr()
+        print(list_pkt_repr)
+        list_pkt_str = []
+        for (cls, map) in list_pkt_repr:
+            list_field_str = []
+            for (k,v) in map.items():
+                list_field_str.append(k + "=" + v)
+            list_pkt_str.append(cls + "(" + ",".join(list_field_str) + ")")
+        return "/".join(list_pkt_str)
+
     def show_pkt(self):
-        self.pnl_dump.show_pkt(self.get_pkt())
+        self.pnl_dump.show_pkt(self.get_pkt(), self.get_repr_str())
 
     def add_layer(self, pkt):
         pkt.remove_payload()

@@ -4,6 +4,7 @@ from layers.LayerField import *
 from layers.LayerDetail import *
 from util.ScapyUtil import *
 
+# A lined of basic fields of a protocol layer.
 class LayerBasic(flx.PyWidget):
     scapy = flx.StringProp(settable=True)
     hex = flx.StringProp(settable=True)
@@ -49,4 +50,12 @@ class LayerBasic(flx.PyWidget):
     @flx.reaction('btn_remove.pointer_click')
     def on_remove(self, *events):
         self.root.pnl_tx.remove_layer(self)
-        
+    
+    # get field repr: {a:'x',b:1}
+    def get_field_repr(self):
+        map = {}
+        for w in self.fields:
+            repr = w.get_repr()
+            if repr:
+                map[w.name] =repr
+        return map

@@ -39,6 +39,7 @@ class ScapyTextField(flx.PyWidget):
         self._parent = parent
         self.name = name
         self.desc = parent.descs[name]
+        self.text = ""
         with parent._cont:
             if widget == "MultiLineEdit":
                 self.w = flx.MultiLineEdit(flex=flex, title=self.desc.title, style="height: 100%; min-height: 200px")
@@ -50,7 +51,6 @@ class ScapyTextField(flx.PyWidget):
                     self.w.set_autocomp(self.desc.autocomp)
         self._parent.fields.append(self)
     
-    @flx.action
     def load_pkt(self, pkt):
         self.pkt = pkt
         v = pkt.fields.get(self.name,None)
@@ -65,22 +65,39 @@ class ScapyTextField(flx.PyWidget):
         else:
             v = repr(v)
         self.w.set_text(v)
+        self.text = v
         
     @flx.reaction('w.user_text')
     def update_pkt(self, *events):
         if not self.pkt:
             return
         text = events[-1]['new_value'].strip()
+        self.set_field_txt(text)
+        self._parent.on_update()
+    
+    # set text value of pkt field
+    def set_field_txt(self, text):
         try:
             if len(text):
                 if self.desc.type != str:
-                    text = eval(text, {}, {})
-                self._parent.pkt.setfieldval(self.name, text)
+                    val = eval(text, {}, {})
+                else:
+                    val = text
+                self._parent.pkt.setfieldval(self.name, val)
             else:
                 self._parent.pkt.fields.pop(self.name, None)
-            self._parent.on_update()
+            self.text = text
         except Exception as e:
             self.root.set_status(str(e))
         else:
             self.root.set_status("")
     
+    def get_repr(self):
+        txt = self.text
+        if not len(txt):
+            return None
+        if self.desc.type == str:
+            return repr(txt)
+        else:
+            print(txt)
+            return txt
