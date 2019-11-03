@@ -19,7 +19,7 @@ class PanelConfig(flx.PyWidget):
         with flx.VBox():
             self.lst_config = flx.GroupWidget(title="Recent:", flex=1, css_class="list")
             self.btn_load = flx.Button(text='Load Pcap...')
-            self.btn_sniff = flx.Button(text='Sniff...')
+            self.btn_sniff = flx.Button(text='S(n)iff...')
         self.load_names()
 
     def load_names(self):

@@ -76,12 +76,20 @@ class ScapyUI(flx.PyWidget):
         self.close_panel()
 
     @flx.reaction('pnl_app.key_down')
-    def on_esc(self, *events):
-        if self.btn_back.disabled:
-            return
+    def on_key(self, *events):
         e = events[-1]
         if e['key']=='Escape' and len(e['modifiers'])==0:
-            self.on_back(events)
+            if not self.btn_back.disabled:
+                self.on_back(events)
+        if self.pnl_active == self.pnl_main and len(e['modifiers'])==1 and 'Alt' in e['modifiers']:
+            if e['key'] == 's': #send
+                self.pnl_tx.pnl_send.send_packet()
+            elif e['key'] == 'y': #apply
+                self.pnl_source.on_save()
+            elif e['key'] == 'w': #new
+                self.pnl_source.on_new()
+            elif e['key'] == 'n': #sniff
+                self.show_rx()
 
     def show_rx(self):
         self.activate_panel(self.pnl_rx)

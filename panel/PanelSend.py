@@ -18,10 +18,10 @@ class PanelSend(flx.PyWidget):
                 ui.Label(text='Interval(ms):', flex=3)
                 self.txt_interval = ui.LineEdit(text='0', flex=2)
                 ui.Label(text=" ", flex=3)
-                self.btn_send = ui.Button(text='Send', flex=2)
+                self.btn_send = ui.Button(text='(S)end', flex=2)
 
     @flx.reaction('btn_send.pointer_click')
-    def _send_packet(self, *events):
+    def send_packet(self, *events):
         try:
             packet = self.root.pnl_tx.get_pkt()
             count = int(self.txt_count.text)

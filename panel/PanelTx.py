@@ -56,7 +56,7 @@ class PanelTx(flx.PyWidget):
                 with flx.VBox() as self.__cont:
                     self._cont = flx.VFix(flex=1)
                 self.pnl_dump = PanelDump(0, flex=1)
-            PanelSend()
+            self.pnl_send = PanelSend()
 
     def get_pkt(self):
         pkt = None

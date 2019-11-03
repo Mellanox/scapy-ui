@@ -8,8 +8,8 @@ class PanelSource(flx.PyWidget):
         with flx.HFix():
             flx.Label(text="Name: ", flex=2)
             self.txt_name = flx.LineEdit(flex=16)
-            self.btn_save = flx.Button(text='Apply', flex=2)
-            self.btn_new = flx.Button(text='New', flex=2)
+            self.btn_save = flx.Button(text='Appl(y)', flex=2)
+            self.btn_new = flx.Button(text='Ne(w)', flex=2)
             self.btn_del = flx.Button(text='Delete', flex=2)
         self.on_name(None)
 
