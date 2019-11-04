@@ -57,13 +57,16 @@ class ScapyTextField(flx.PyWidget):
             self.w.set_text("")
             return
         v = self._parent.field_reprs[self.name]
+        if self.desc.type == str:
+            v = eval(v)
         self.w.set_text(v)
         self.update_pkt_field(v)
 
     @flx.reaction('w.user_text')
     def update_pkt(self, *events):
-        text = events[-1]['new_value']
-        rep = text.strip()
+        text = events[-1]['new_value'].strip()
+        # add '' to str
+        rep = repr(text) if self.desc.type == str else text
         if len(rep):
             self._parent.field_reprs[self.name] = rep
         else:
@@ -75,10 +78,7 @@ class ScapyTextField(flx.PyWidget):
     def update_pkt_field(self, text):
         try:
             if text and len(text):
-                if self.desc.type != str:
-                    val = eval(text, {}, {})
-                else:
-                    val = text
+                val = eval(text, {}, {})
                 self._parent.pkt.setfieldval(self.name, val)
             else:
                 self._parent.pkt.fields.pop(self.name, None)
