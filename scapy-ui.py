@@ -12,6 +12,12 @@ from panel.PanelBrowser import *
 
 logo_html = '<a href="https://scapy.net" target="_blank"><img src="https://scapy.net/img/logo.png" height="96" width="96"/></a>'
 title_html = '<a href="https://github.com/Mellanox/scapy-ui" target="_blank" title="Mellanox DPDK China group Hackathon project"><font size="+2">Scapy Web GUI</font></a>'
+
+class FocusBox(flx.VBox):
+    @flx.action
+    def focus(self):
+        self.node.focus()
+
 class ScapyUI(flx.PyWidget):
     CSS = """
         .center {padding: 7px auto; text-align: center;}
@@ -29,7 +35,7 @@ class ScapyUI(flx.PyWidget):
     """    
 
     def init(self):
-        with flx.VBox(flex=1, title="Scapy GUI", tabindex=0) as self.pnl_app:
+        with FocusBox(flex=1, title="Scapy GUI", tabindex=0) as self.pnl_app:
             with flx.HBox():
                 flx.Label(html=title_html, css_class="status")
                 self.lbl_status = flx.Label(text='...', flex=1, css_class="status")
@@ -60,6 +66,7 @@ class ScapyUI(flx.PyWidget):
         else:
             self.btn_back.set_disabled(1)
             self.btn_back.set_css_class("disabled")
+        self.pnl_app.focus()
             
     def activate_panel(self, pnl):
         pnl._pnl_prev = self.pnl_active
