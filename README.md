@@ -11,7 +11,8 @@ A web based Scapy GUI, major features:
 
 Requirements:
 
-- pip3 install scapy flex python3-devel psutil
+- yum install python3-devel
+- pip3 install scapy flexx psutil
 
 Start:
 
