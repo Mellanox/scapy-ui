@@ -1,5 +1,4 @@
-# scapy-ui
-Scapy UI
+# Scapy UI
 
 A web based Scapy GUI, major features:
 
@@ -12,7 +11,14 @@ A web based Scapy GUI, major features:
 Requirements:
 
 - yum install python3-devel
-- pip3 install scapy flexx psutil
+
+or
+
+- apt-get install python3-dev
+
+and
+
+- pip3 install --no-cache-dir scapy flexx psutil
 
 Start:
 
@@ -22,6 +28,13 @@ Setup a remote server:
 
 - sudo ./scapy-ui.py --flexx-hostname=`hostname` --flexx-port=49190
 - http://{hostname}:49190/ScapyUI/
+
+Build and Run From docker support:
+
+- docker build -t scapy-ui .
+
+- docker run -it --rm --network=host scapy-ui:latest
+
 
 TBD:
 
